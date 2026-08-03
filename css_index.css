@@ -199,7 +199,7 @@ main{
 
 .client__Input,
 .unit__Input {
-    width: 100%;
+    width: 95%;
     grid-column: 2;
 }
 
