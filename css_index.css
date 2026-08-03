@@ -683,6 +683,7 @@ main{
 }
 
 .coverageActions__Button {
+    magin-top:10px;
     border: 1px solid #b9d5f4;
     background-color: #eff6ff;
     color: #174a7c;
