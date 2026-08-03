@@ -6,6 +6,7 @@ const agentes = {
     "karen.miranda@swartz.mx": { correo: "karen.miranda@swartz.mx", extension: "101" },
     "lupita.ortega@swartz.mx": { correo: "lupita.ortega@swartz.mx", extension: "107" },
     "mexicali@swartz.mx": { correo: "mexicali@swartz.mx", extension: "112" }
+    "tijuana@contadoresswartz.onmicrosoft.com": { correo: "tijuana@contadoresswartz.onmicrosoft.com", extension: "110" }
 };
 
 const agenteSelect = document.getElementById("agenteSelect");
