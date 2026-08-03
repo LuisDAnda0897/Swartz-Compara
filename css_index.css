@@ -765,6 +765,7 @@ main{
 }
 
 .clear__Button {
+    margin-top: 24px;
     padding: 12px 22px;
     background-color: #6b7280;
     color: white;
