@@ -91,7 +91,7 @@ function capitalizarPalabras(){
     const input = document.getElementById("clientName");
     let palabras = input.value.split(" ");
 
-    for (let i = 0, i <palabras.lenght; i++){
+    for (let i = 0; i <palabras.lenght; i++){
         if (palabras[i]{
             palabras[i] = palabras[i].topUpperCase() + palabras[i].slice(1).toLowerCase();
         }
