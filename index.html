@@ -45,7 +45,7 @@
                     <h1>Cliente</h1>
 
                     <label class="client__info" for="clientName">Nombre:</label>
-                    <input id="clientName" class="client__Input" placeholder="Ingresa el Nombre del cliente">
+                    <input id="clientName" class="client__Input" oninput="capitalizarPalabras()" placeholder="Ingresa el Nombre del cliente">
 
                     <label class="client__info" for="clientBdy">F. Nacimiento</label>
                     <input id="clientBdy" class="client__Input" placeholder="DD/MM/AAAA" type="date">
@@ -78,7 +78,7 @@
                     <input id="unitYear" class="unit__Input" placeholder="2025">
 
                     <label class="unit__info" for="unitName">Descripción</label>
-                    <input id="unitName" class="unit__Input" placeholder="NISSAN VERSA SENSE AUT">
+                    <input id="unitName" class="unit__Input" oninput="convertirMayus()" placeholder="NISSAN VERSA SENSE AUT">
 
                     <div class="unit__ChoicePanel">
                         <div class="unit__ChoiceBlock">
