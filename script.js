@@ -87,7 +87,7 @@ function actualizarFecha() {
     fechaCoti.textContent = new Date().toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
-function capitalizarPalabra(){
+function capitalizarPalabras(){
     const input = document.getElementById("clientName");
     let palabras = input.value.split(" ");
 
