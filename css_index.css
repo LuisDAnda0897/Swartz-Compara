@@ -23,8 +23,16 @@ body{
         gap: 10px 20px;
     }
 
+    #clientName{
+        text-transform:capitalize;
+    }
+
     .unit__Data {
         grid-template-columns: 105px minmax(220px, 1fr) 135px;
+    }
+
+    #unitName{
+        text-transform: uppercase;
     }
 
     .client__Data {
