@@ -87,6 +87,25 @@ function actualizarFecha() {
     fechaCoti.textContent = new Date().toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
 
+function capitalizarPalabra(){
+    const input = document.getElementById("clientName");
+    let palabras = input.value.split(" ");
+
+    for (let i = 0, i <palabras.lenght; i++){
+        if (palabras[i]{
+            palabras[i] = palabras[i].topUpperCase() + palabras[i].slice(1).toLowerCase();
+        }
+    }
+
+    input.value = palabras.join(" ");
+}
+
+function conertirMayus(){
+    const input = document.getElementById("unitName");
+
+    input.value = input.value.toUpperCase();
+}
+
 function formatearFechaInput(id) {
     const valor = document.getElementById(id).value;
     if (!valor) return "-";
