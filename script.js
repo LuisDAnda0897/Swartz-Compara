@@ -505,42 +505,42 @@ function validarFormularioPDF() {
         campo.classList.remove("campo-faltante");
     });
 
-    if (!clientName?.value.trim()) {
+    if (!clientName || !clientName.value.trim()) {
         faltantes.push({
             nombre: "Nombre del cliente",
             elemento: clientName
         });
     }
 
-    if (!clientBdy?.value) {
+    if (!clientBdy || !clientBdy.value) {
         faltantes.push({
             nombre: "Fecha de nacimiento",
             elemento: clientBdy
         });
     }
 
-    if (!clientCP?.value.trim()) {
+    if (!clientCP || !clientCP.value.trim()) {
         faltantes.push({
             nombre: "Código postal",
             elemento: clientCP
         });
     }
 
-    if (!unitYear?.value.trim()) {
+    if (!unitYear || !unitYear.value.trim()) {
         faltantes.push({
             nombre: "Año del vehículo",
             elemento: unitYear
         });
     }
 
-    if (!unitName?.value.trim()) {
+    if (!unitName || !unitName.value.trim()) {
         faltantes.push({
             nombre: "Descripción del vehículo",
             elemento: unitName
         });
     }
 
-    if (!agenteSelect?.value) {
+    if (!agenteSelect || !agenteSelect.value) {
         faltantes.push({
             nombre: "Agente",
             elemento: agenteSelect
@@ -555,13 +555,14 @@ function validarFormularioPDF() {
     ];
 
     const tienePlan = planes.some(id => {
-        return document.getElementById(id)?.checked;
+        const elemento = document.getElementById(id);
+        return elemento && elemento.checked;
     });
 
     if (!tienePlan) {
         faltantes.push({
             nombre: "Tipo de uso del vehículo",
-            elemento: document.getElementById("unitModeNormal")
+            elemento: null
         });
     }
 
@@ -572,23 +573,25 @@ function validarFormularioPDF() {
     ];
 
     const tieneCobertura = coberturas.some(id => {
-        return document.getElementById(id)?.checked;
+        const elemento = document.getElementById(id);
+        return elemento && elemento.checked;
     });
 
     if (!tieneCobertura) {
         faltantes.push({
             nombre: "Tipo de cobertura",
-            elemento: document.getElementById("coberturaAmplia")
-        });
-    }
-
-    if (obtenerAseguradorasSeleccionadas().length === 0) {
-        faltantes.push({
-            nombre: "Al menos una aseguradora",
             elemento: null
         });
     }
 
+    const seleccionadas = obtenerAseguradorasSeleccionadas();
+
+    if (seleccionadas.length === 0) {
+        faltantes.push({
+            nombre: "Selecciona al menos una aseguradora",
+            elemento: null
+        });
+    }
 
     if (faltantes.length > 0) {
         mostrarErroresValidacion(faltantes);
@@ -599,6 +602,68 @@ function validarFormularioPDF() {
     return true;
 }
 
+function mostrarErroresValidacion(faltantes) {
+    let aviso = document.getElementById("avisoValidacionPDF");
+    if (!aviso) {
+        aviso = document.createElement("div");
+        aviso.id = "avisoValidacionPDF";
+        aviso.innerHTML = `
+            <div class="avisoValidacion__icono">⚠️</div>
+
+            <div class="avisoValidacion__contenido">
+                <strong>Rellena los campos faltantes</strong>
+                <div class="avisoValidacion__lista"></div>
+            </div>
+
+            <button type="button" class="avisoValidacion__cerrar">
+                ×
+            </button>
+        `;
+        document.body.appendChild(aviso);
+        aviso
+            .querySelector(".avisoValidacion__cerrar")
+            .addEventListener("click", ocultarErroresValidacion);
+    }
+
+    const lista = aviso.querySelector(".avisoValidacion__lista");
+
+    lista.innerHTML = faltantes
+        .map(item => `<div>• ${item.nombre}</div>`)
+        .join("");
+    faltantes.forEach(item => {
+        if (item.elemento) {
+            item.elemento.classList.add("campo-faltante");
+        }
+    });
+
+    aviso.classList.add("mostrar");
+
+    const primerCampo = faltantes.find(item => item.elemento)?.elemento;
+    if (primerCampo) {
+        primerCampo.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+        setTimeout(() => {
+            primerCampo.focus();
+        }, 350);
+    }
+}
+
+
+function ocultarErroresValidacion() {
+    const aviso = document.getElementById("avisoValidacionPDF");
+
+    if (aviso) {
+        aviso.classList.remove("mostrar");
+    }
+    document
+        .querySelectorAll(".campo-faltante")
+        .forEach(campo => {
+            campo.classList.remove("campo-faltante");
+        });
+}
+
 async function generarPDF() {
     if (!validarFormularioPDF()) {
         return;
@@ -606,11 +671,7 @@ async function generarPDF() {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF("landscape", "mm", "letter");
     const seleccionadas = obtenerAseguradorasSeleccionadas();
-    if (seleccionadas.length === 0) {
-        alert("Selecciona al menos una aseguradora para generar el PDF.");
-        return;
-    }
-
+    
     const logoSwartz = await cargarImagen("logo-Photoroom.png");
     const logosAseguradoras = {};
     for (const aseguradora of seleccionadas) logosAseguradoras[aseguradora.nombre] = await cargarImagen(aseguradora.logo);
