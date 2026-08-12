@@ -511,71 +511,90 @@ function validarFormularioPDF() {
             elemento: clientName
         });
     }
+
     if (!clientBdy?.value) {
         faltantes.push({
             nombre: "Fecha de nacimiento",
             elemento: clientBdy
         });
     }
+
     if (!clientCP?.value.trim()) {
         faltantes.push({
             nombre: "Código postal",
             elemento: clientCP
         });
     }
+
     if (!unitYear?.value.trim()) {
         faltantes.push({
             nombre: "Año del vehículo",
             elemento: unitYear
         });
     }
+
     if (!unitName?.value.trim()) {
         faltantes.push({
             nombre: "Descripción del vehículo",
             elemento: unitName
         });
     }
+
     if (!agenteSelect?.value) {
         faltantes.push({
             nombre: "Agente",
             elemento: agenteSelect
         });
     }
-    
+
     const planes = [
         "unitModeUber",
         "unitModeMulti",
         "unitModeNormal",
         "unitModeMoto"
     ];
-    if (!planes.some(id => document.getElementById(id)?.checked)) {
+
+    const tienePlan = planes.some(id => {
+        return document.getElementById(id)?.checked;
+    });
+
+    if (!tienePlan) {
         faltantes.push({
             nombre: "Tipo de uso del vehículo",
             elemento: document.getElementById("unitModeNormal")
         });
     }
-    
+
     const coberturas = [
         "coberturaAmplia",
         "coberturaLimitada",
         "coberturaRC"
     ];
-    if (!coberturas.some(id => document.getElementById(id)?.checked)) {
+
+    const tieneCobertura = coberturas.some(id => {
+        return document.getElementById(id)?.checked;
+    });
+
+    if (!tieneCobertura) {
         faltantes.push({
             nombre: "Tipo de cobertura",
             elemento: document.getElementById("coberturaAmplia")
         });
     }
-    if (!obtenerAseguradorasSeleccionadas().length) {
+
+    if (obtenerAseguradorasSeleccionadas().length === 0) {
         faltantes.push({
             nombre: "Al menos una aseguradora",
             elemento: null
         });
     }
+
+
     if (faltantes.length > 0) {
         mostrarErroresValidacion(faltantes);
         return false;
     }
+
     ocultarErroresValidacion();
     return true;
 }
