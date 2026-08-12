@@ -491,7 +491,99 @@ function agregarFilaPares(body, nombre, seleccionadas, sumaSelector, dedSelector
     body.push(fila);
 }
 
+function validarFormularioPDF() {
+    const faltantes = [];
+
+    const clientName = document.getElementById("clientName");
+    const clientBdy = document.getElementById("clientBdy");
+    const clientCP = document.getElementById("clientCP");
+    const unitYear = document.getElementById("unitYear");
+    const unitName = document.getElementById("unitName");
+    const agenteSelect = document.getElementById("agenteSelect");
+
+    document.querySelectorAll(".campo-faltante").forEach(campo => {
+        campo.classList.remove("campo-faltante");
+    });
+
+    if (!clientName?.value.trim()) {
+        faltantes.push({
+            nombre: "Nombre del cliente",
+            elemento: clientName
+        });
+    }
+    if (!clientBdy?.value) {
+        faltantes.push({
+            nombre: "Fecha de nacimiento",
+            elemento: clientBdy
+        });
+    }
+    if (!clientCP?.value.trim()) {
+        faltantes.push({
+            nombre: "Código postal",
+            elemento: clientCP
+        });
+    }
+    if (!unitYear?.value.trim()) {
+        faltantes.push({
+            nombre: "Año del vehículo",
+            elemento: unitYear
+        });
+    }
+    if (!unitName?.value.trim()) {
+        faltantes.push({
+            nombre: "Descripción del vehículo",
+            elemento: unitName
+        });
+    }
+    if (!agenteSelect?.value) {
+        faltantes.push({
+            nombre: "Agente",
+            elemento: agenteSelect
+        });
+    }
+    
+    const planes = [
+        "unitModeUber",
+        "unitModeMulti",
+        "unitModeNormal",
+        "unitModeMoto"
+    ];
+    if (!planes.some(id => document.getElementById(id)?.checked)) {
+        faltantes.push({
+            nombre: "Tipo de uso del vehículo",
+            elemento: document.getElementById("unitModeNormal")
+        });
+    }
+    
+    const coberturas = [
+        "coberturaAmplia",
+        "coberturaLimitada",
+        "coberturaRC"
+    ];
+    if (!coberturas.some(id => document.getElementById(id)?.checked)) {
+        faltantes.push({
+            nombre: "Tipo de cobertura",
+            elemento: document.getElementById("coberturaAmplia")
+        });
+    }
+    if (!obtenerAseguradorasSeleccionadas().length) {
+        faltantes.push({
+            nombre: "Al menos una aseguradora",
+            elemento: null
+        });
+    }
+    if (faltantes.length > 0) {
+        mostrarErroresValidacion(faltantes);
+        return false;
+    }
+    ocultarErroresValidacion();
+    return true;
+}
+
 async function generarPDF() {
+    if (!validarFormularioPDF()) {
+        return;
+    }
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF("landscape", "mm", "letter");
     const seleccionadas = obtenerAseguradorasSeleccionadas();
