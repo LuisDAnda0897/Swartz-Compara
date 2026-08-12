@@ -973,3 +973,79 @@ main{
         flex-wrap: wrap;
     }
 }
+
+#avisoValidacionPDF {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+
+    width: min(390px, calc(100vw - 40px));
+    padding: 16px 18px;
+
+    background: #fff;
+    border: 1px solid #f1c7c7;
+    border-left: 4px solid #d64545;
+    border-radius: 10px;
+
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+
+    opacity: 0;
+    transform: translateY(-12px);
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+}
+
+#avisoValidacionPDF.mostrar {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.avisoValidacion__icono {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.avisoValidacion__contenido {
+    flex: 1;
+}
+
+.avisoValidacion__contenido strong {
+    display: block;
+    margin-bottom: 7px;
+    color: #2b2f36;
+    font-size: 14px;
+}
+
+.avisoValidacion__lista {
+    color: #69707d;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.avisoValidacion__cerrar {
+    border: 0;
+    background: transparent;
+    color: #8b929d;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+}
+
+.avisoValidacion__cerrar:hover {
+    color: #333;
+}
+
+.campo-faltante {
+    border-color: #d64545 !important;
+    box-shadow: 0 0 0 3px rgba(214, 69, 69, 0.12) !important;
+}
