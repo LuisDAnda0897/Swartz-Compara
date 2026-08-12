@@ -91,16 +91,16 @@ function capitalizarPalabras(){
     const input = document.getElementById("clientName");
     let palabras = input.value.split(" ");
 
-    for (let i = 0; i <palabras.lenght; i++) {
+    for (let i = 0; i <palabras.length; i++) {
         if (palabras[i]){
-            palabras[i] = palabras[i][0].topUpperCase() + palabras[i].slice(1).toLowerCase();
+            palabras[i] = palabras[i][0].toUpperCase() + palabras[i].slice(1).toLowerCase();
         }
     }
 
     input.value = palabras.join(" ");
 }
 
-function conertirMayus(){
+function convertirMayus(){
     const input = document.getElementById("unitName");
 
     input.value = input.value.toUpperCase();
