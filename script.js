@@ -506,34 +506,92 @@ function validarFormularioPDF() {
     });
 
     if (!clientName || !clientName.value.trim()) {
-        faltantes.push({ nombre: "Nombre del cliente", elemento: clientName });
+        faltantes.push({
+            nombre: "Nombre del cliente",
+            elemento: clientName
+        });
     }
+
     if (!clientBdy || !clientBdy.value) {
-        faltantes.push({ nombre: "Fecha de nacimiento", elemento: clientBdy });
+        faltantes.push({
+            nombre: "Fecha de nacimiento",
+            elemento: clientBdy
+        });
     }
+
     if (!clientCP || !clientCP.value.trim()) {
-        faltantes.push({ nombre: "Código postal", elemento: clientCP });
+        faltantes.push({
+            nombre: "Código postal",
+            elemento: clientCP
+        });
     }
+
     if (!unitYear || !unitYear.value.trim()) {
-        faltantes.push({ nombre: "Año del vehículo", elemento: unitYear });
+        faltantes.push({
+            nombre: "Año del vehículo",
+            elemento: unitYear
+        });
     }
+
     if (!unitName || !unitName.value.trim()) {
-        faltantes.push({ nombre: "Descripción del vehículo", elemento: unitName });
+        faltantes.push({
+            nombre: "Descripción del vehículo",
+            elemento: unitName
+        });
     }
+
     if (!agenteSelect || !agenteSelect.value) {
-        faltantes.push({ nombre: "Agente", elemento: agenteSelect });
+        faltantes.push({
+            nombre: "Agente",
+            elemento: agenteSelect
+        });
     }
 
-    const planes = ["unitModeUber", "unitModeMulti", "unitModeNormal", "unitModeMoto"];
-    const tienePlan = planes.some(id => document.getElementById(id)?.checked);
-    if (!tienePlan) faltantes.push({ nombre: "Tipo de uso del vehículo", elemento: null });
+    const planes = [
+        "unitModeUber",
+        "unitModeMulti",
+        "unitModeNormal",
+        "unitModeMoto"
+    ];
 
-    const coberturas = ["coberturaAmplia", "coberturaLimitada", "coberturaRC"];
-    const tieneCobertura = coberturas.some(id => document.getElementById(id)?.checked);
-    if (!tieneCobertura) faltantes.push({ nombre: "Tipo de cobertura", elemento: null });
+    const tienePlan = planes.some(id => {
+        const elemento = document.getElementById(id);
+        return elemento && elemento.checked;
+    });
+
+    if (!tienePlan) {
+        faltantes.push({
+            nombre: "Tipo de uso del vehículo",
+            elemento: null
+        });
+    }
+
+    const coberturas = [
+        "coberturaAmplia",
+        "coberturaLimitada",
+        "coberturaRC"
+    ];
+
+    const tieneCobertura = coberturas.some(id => {
+        const elemento = document.getElementById(id);
+        return elemento && elemento.checked;
+    });
+
+    if (!tieneCobertura) {
+        faltantes.push({
+            nombre: "Tipo de cobertura",
+            elemento: null
+        });
+    }
 
     const seleccionadas = obtenerAseguradorasSeleccionadas();
-    if (seleccionadas.length === 0) faltantes.push({ nombre: "Selecciona al menos una aseguradora", elemento: null });
+
+    if (seleccionadas.length === 0) {
+        faltantes.push({
+            nombre: "Selecciona al menos una aseguradora",
+            elemento: null
+        });
+    }
 
     if (faltantes.length > 0) {
         mostrarErroresValidacion(faltantes);
@@ -551,38 +609,69 @@ function mostrarErroresValidacion(faltantes) {
         aviso.id = "avisoValidacionPDF";
         aviso.innerHTML = `
             <div class="avisoValidacion__icono">⚠️</div>
+
             <div class="avisoValidacion__contenido">
                 <strong>Rellena los campos faltantes</strong>
                 <div class="avisoValidacion__lista"></div>
             </div>
-            <button type="button" class="avisoValidacion__cerrar">×</button>
+
+            <button type="button" class="avisoValidacion__cerrar">
+                ×
+            </button>
         `;
         document.body.appendChild(aviso);
-        aviso.querySelector(".avisoValidacion__cerrar").addEventListener("click", ocultarErroresValidacion);
+        aviso
+            .querySelector(".avisoValidacion__cerrar")
+            .addEventListener("click", ocultarErroresValidacion);
     }
 
-    aviso.querySelector(".avisoValidacion__lista").innerHTML = faltantes.map(item => `<div>• ${item.nombre}</div>`).join("");
-    faltantes.forEach(item => item.elemento?.classList.add("campo-faltante"));
+    const lista = aviso.querySelector(".avisoValidacion__lista");
+
+    lista.innerHTML = faltantes
+        .map(item => `<div>• ${item.nombre}</div>`)
+        .join("");
+    faltantes.forEach(item => {
+        if (item.elemento) {
+            item.elemento.classList.add("campo-faltante");
+        }
+    });
+
     aviso.classList.add("mostrar");
 
     const primerCampo = faltantes.find(item => item.elemento)?.elemento;
     if (primerCampo) {
-        primerCampo.scrollIntoView({ behavior: "smooth", block: "center" });
-        setTimeout(() => primerCampo.focus(), 350);
+        primerCampo.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+        setTimeout(() => {
+            primerCampo.focus();
+        }, 350);
     }
 }
 
+
 function ocultarErroresValidacion() {
-    document.getElementById("avisoValidacionPDF")?.classList.remove("mostrar");
-    document.querySelectorAll(".campo-faltante").forEach(campo => campo.classList.remove("campo-faltante"));
+    const aviso = document.getElementById("avisoValidacionPDF");
+
+    if (aviso) {
+        aviso.classList.remove("mostrar");
+    }
+    document
+        .querySelectorAll(".campo-faltante")
+        .forEach(campo => {
+            campo.classList.remove("campo-faltante");
+        });
 }
 
 async function generarPDF() {
-    if (!validarFormularioPDF()) return;
-
+    if (!validarFormularioPDF()) {
+        return;
+    }
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF("landscape", "mm", "letter");
     const seleccionadas = obtenerAseguradorasSeleccionadas();
+    
     const logoSwartz = await cargarImagen("logo-Photoroom.png");
     const logosAseguradoras = {};
     for (const aseguradora of seleccionadas) logosAseguradoras[aseguradora.nombre] = await cargarImagen(aseguradora.logo);
@@ -601,6 +690,35 @@ async function generarPDF() {
     const verdeColumna = [226, 247, 234], verdeCosto = [204, 245, 216];
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
+
+    if (logoSwartz) dibujarImagenAjustada(doc, logoSwartz, 14, 7, 44, 18);
+    doc.setFont(undefined, "bold");
+    doc.setTextColor(...grisTexto);
+    doc.setFontSize(18);
+    doc.text("Comparativa de Seguro de Auto", 70, 13);
+    doc.setFontSize(12);
+    doc.setTextColor(...azul);
+    doc.text("Cliente", 70, 22);
+    doc.text("Vehículo", 135, 22);
+    doc.text("Agente", 205, 22);
+    doc.setFontSize(10);
+    doc.setFont(undefined, "normal");
+    doc.setTextColor(...grisTexto);
+    doc.text(document.getElementById("clientName").value || "-", 70, 27);
+    doc.text(`Nac: ${formatearFechaInput("clientBdy")}`, 70, 32);
+    doc.text(`C.P: ${document.getElementById("clientCP").value || "-"}`, 70, 37);
+    doc.text(`${document.getElementById("unitYear").value || ""} ${document.getElementById("unitName").value || ""}`, 135, 27);
+    doc.text(`Plan: ${obtenerTextoPlan()}`, 135, 32);
+    doc.text(`Cobertura: ${obtenerTextoCobertura()}`, 135, 37);
+    doc.text(agenteSelect.selectedOptions[0]?.textContent || "", 205, 27);
+    doc.text((correoAgente.textContent || "").replace("Correo:", "Correo: "), 205, 32);
+    doc.text(extensionAgente.textContent || "", 205, 37);
+    doc.setFont(undefined, "bold");
+    doc.setFontSize(9);
+    doc.text(`Fecha: ${fechaCoti.textContent}`, 230, 13);
+    doc.setDrawColor(...dorado);
+    doc.setLineWidth(1.2);
+    doc.line(14, 42, 265, 42);
 
     doc.setFillColor(...grisSuave);
     doc.rect(0, 0, pageWidth, pageHeight, "F");
@@ -655,26 +773,35 @@ async function generarPDF() {
     doc.setTextColor(...grisMuted);
     doc.text(`Nac: ${formatearFechaInput("clientBdy")}   C.P: ${document.getElementById("clientCP").value || "-"}`, 20, 52);
     doc.text(`Cobertura: ${obtenerTextoCobertura()}`, 92, 52);
-    const datosAgentePDF = [
-        (correoAgente.textContent || "").replace("Correo:", "Correo: "),
-        extensionAgente.textContent || ""
-    ].filter(Boolean);
-    doc.text(datosAgentePDF, 176, 51, { maxWidth: 82, lineHeightFactor: 1.15 });
+    doc.text((correoAgente.textContent || "").replace("Correo:", "Correo: "), 176, 52, { maxWidth: 82 });
+    doc.text(extensionAgente.textContent || "", 176, 56, { maxWidth: 82 });
 
     doc.setDrawColor(...dorado);
     doc.setLineWidth(0.9);
     doc.line(14, 62, 265, 62);
 
     const headTop = ["Rubro"];
-    seleccionadas.forEach(() => headTop.push({ content: "", colSpan: 2 }));
-    const subEncabezadoCoberturas = ["", ...seleccionadas.flatMap(() => ["Suma asegurada", "Deducible"])];
+    seleccionadas.forEach(() => {
+        headTop.push({ content: "", colSpan: 2 });
+    });
+
+    const subEncabezadoCoberturas = [
+        "",
+        ...seleccionadas.flatMap(() => ["Suma asegurada", "Deducible"])
+    ];
+
     const hayDesglosePago = desglosesPago.some(desglose => desglose !== "-");
+
     const notaMsi = "El pago anual puede realizarse en una sola exhibicion o con tarjeta de credito a meses sin intereses, sujeto a autorizacion bancaria.";
     const body = [
         ["Costo Anual", ...costos.map(costo => ({ content: `PAGO ANUAL\n${costo}\nMSI disponibles`, colSpan: 2 }))],
         ["Otras formas de pago", ...formasPago.map(forma => ({ content: forma, colSpan: 2 }))]
     ];
-    if (hayDesglosePago) body.push(["Desglose de pagos", ...desglosesPago.map(desglose => ({ content: desglose, colSpan: 2 }))]);
+
+    if (hayDesglosePago) {
+        body.push(["Desglose de pagos", ...desglosesPago.map(desglose => ({ content: desglose, colSpan: 2 }))]);
+    }
+
     body.push(["MSI", { content: notaMsi, colSpan: seleccionadas.length * 2 }]);
     body.push(subEncabezadoCoberturas);
 
@@ -685,6 +812,7 @@ async function generarPDF() {
         agregarFilaPares(body, "Robo Total", seleccionadas, ".sumaRt__Input", ".rb__Input", "#rbAXA");
     }
     if (tipoCobertura === "limitada") agregarFilaPares(body, "Robo Total", seleccionadas, ".sumaRt__Input", ".rb__Input", "#rbAXA");
+
     agregarFilaPares(body, "Responsabilidad Civil Daños a Terceros", seleccionadas, ".rc__Input", ".rcd__Input");
     if (!["particular", "motoapp"].includes(obtenerPlanSeleccionado())) agregarFilaPares(body, "Responsabilidad Civil Ocupantes", seleccionadas, ".rco__Input", ".rcoDed__Input");
     agregarFilaPares(body, "Gastos Médicos Ocupantes", seleccionadas, ".gm__Input", ".gmDed__Input");
@@ -697,6 +825,7 @@ async function generarPDF() {
     const fontSizeTabla = body.length > 19 ? 5.2 : body.length > 16 ? 5.8 : 6.6;
     const altoMinimoTabla = body.length > 19 ? 5.9 : body.length > 16 ? 6.4 : 7.3;
     const paddingTabla = body.length > 19 ? 0.85 : body.length > 16 ? 1.05 : 1.35;
+
     const tableMargin = 10;
     const tableWidth = pageWidth - (tableMargin * 2);
     const rubroWidth = 34;
@@ -704,8 +833,17 @@ async function generarPDF() {
     const pairWidth = availableWidth / seleccionadas.length;
     const sumaWidth = pairWidth * 0.58;
     const deducibleWidth = pairWidth * 0.42;
-    const columnStyles = { 0: { halign: "left", fontStyle: "bold", cellWidth: rubroWidth, fillColor: azulClaro } };
-    for (let index = 1; index <= seleccionadas.length * 2; index++) columnStyles[index] = { cellWidth: index % 2 === 1 ? sumaWidth : deducibleWidth };
+
+    const columnStyles = {
+        0: { halign: "left", fontStyle: "bold", cellWidth: rubroWidth, fillColor: azulClaro }
+    };
+
+    for (let index = 1; index <= seleccionadas.length * 2; index++) {
+        const esSuma = index % 2 === 1;
+        columnStyles[index] = {
+            cellWidth: esSuma ? sumaWidth : deducibleWidth
+        };
+    }
 
     doc.autoTable({
         startY: 66,
@@ -732,8 +870,11 @@ async function generarPDF() {
                 data.cell.styles.textColor = [92, 74, 45];
                 data.cell.styles.minCellHeight = 8.5;
                 data.cell.styles.fontSize = data.column.index === 0 ? 7 : 6.8;
-                if (data.column.index === 0) data.cell.styles.fontStyle = "bold";
-                else data.cell.styles.halign = "left";
+                if (data.column.index === 0) {
+                    data.cell.styles.fontStyle = "bold";
+                } else {
+                    data.cell.styles.halign = "left";
+                }
             }
             if (data.section === "body" && data.row.raw?.esAdicional) {
                 data.cell.styles.fillColor = data.column.index === 0 ? [244, 247, 251] : [255, 255, 255];
@@ -747,14 +888,18 @@ async function generarPDF() {
                 data.cell.styles.fontSize = data.column.index === 0 ? 6.8 : 7.2;
                 data.cell.styles.minCellHeight = 7.5;
             }
+
             if (data.section === "body" && data.row.raw?.[0] === "Desglose de pagos") {
                 data.cell.styles.fontSize = data.column.index === 0 ? 7.5 : 6.8;
                 data.cell.styles.minCellHeight = 17;
                 if (data.column.index === 0) {
                     data.cell.styles.fillColor = azulClaro;
                     data.cell.styles.fontStyle = "bold";
-                } else if (data.cell.styles.fillColor !== verdeColumna) data.cell.styles.fillColor = [255, 252, 245];
+                } else if (data.cell.styles.fillColor !== verdeColumna) {
+                    data.cell.styles.fillColor = [255, 252, 245];
+                }
             }
+
             if (data.section === "body" && data.row.index === 0) {
                 data.cell.styles.fontSize = data.column.index === 0 ? 8 : 8.8;
                 data.cell.styles.minCellHeight = 17;
