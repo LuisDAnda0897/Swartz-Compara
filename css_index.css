@@ -130,6 +130,13 @@ body{
     display: flex;
     justify-content: center;
     gap: 10px;
+    width: 100%;
+}
+
+.agente__List{
+    flex: 1;
+    max-width: 220px;
+    min-width: 0;
 }
 
 .agent__Selector h2{
@@ -410,7 +417,14 @@ main{
 }
 
 .agent__Data{
-    justify-self: start;
+    justify-self: center;
+    width: 100%;
+    max-width: 420px;
+    min-width: 0;
+}
+
+.agent__Data p{
+    overflow-wrap: anywhere;
 }
 
 .pdf__Button {
