@@ -210,8 +210,14 @@ function llenarCoberturasAutomaticas() {
     const plan = obtenerPlanSeleccionado();
     if (!plan) return;
     const datos = datosPorPlan[plan];
-    llenarInputs(".dm__Input", datos.dm, false);
-    llenarInputs(".rb__Input", datos.rb, false);
+    const deduciblesAXA = {
+        particular: { dm: "5%", rb: "10%" },
+        uber: { dm: "5%", rb: "10%" },
+        multiplataforma: { dm: "10%", rb: "20%" },
+        motoapp: { dm: "10%", rb: "20%" }
+    };
+    llenarInputs(".dm__Input", [deduciblesAXA[plan].dm, ...datos.dm]);
+    llenarInputs(".rb__Input", [deduciblesAXA[plan].rb, ...datos.rb]);
     llenarInputs(".rc__Input", datos.rc);
     llenarInputs(".rcd__Input", datos.rcd);
     llenarInputs(".rco__Input", datos.rco);
@@ -500,6 +506,8 @@ function validarFormularioPDF() {
     const unitYear = document.getElementById("unitYear");
     const unitName = document.getElementById("unitName");
     const agenteSelect = document.getElementById("agenteSelect");
+    const femenino = document.getElementById("Femenino");
+    const masculino = document.getElementById("Masculino");
 
     document.querySelectorAll(".campo-faltante").forEach(campo => {
         campo.classList.remove("campo-faltante");
@@ -544,6 +552,13 @@ function validarFormularioPDF() {
         faltantes.push({
             nombre: "Agente",
             elemento: agenteSelect
+        });
+    }
+
+    if (!femenino?.checked && !masculino?.checked) {
+        faltantes.push({
+            nombre: "Sexo del cliente",
+            elemento: femenino || masculino
         });
     }
 
@@ -592,6 +607,26 @@ function validarFormularioPDF() {
             elemento: null
         });
     }
+
+    const costos = document.querySelectorAll(".price__Input");
+    seleccionadas.forEach((aseguradora) => {
+        const costo = costos[aseguradora.index];
+        if (!costo?.value.trim()) {
+            faltantes.push({
+                nombre: `Costo anual de ${aseguradora.nombre}`,
+                elemento: costo
+            });
+        }
+
+        const suma = document.getElementById(sumaIds[aseguradora.index]);
+        const valor = document.getElementById(valorIds[aseguradora.index]);
+        if (suma && debeMostrarValor(suma.value) && !valor?.value.trim()) {
+            faltantes.push({
+                nombre: `Valor de suma asegurada de ${aseguradora.nombre}`,
+                elemento: valor
+            });
+        }
+    });
 
     if (faltantes.length > 0) {
         mostrarErroresValidacion(faltantes);
@@ -806,11 +841,10 @@ async function generarPDF() {
 
     const tipoCobertura = obtenerTipoCobertura();
     if (tipoCobertura === "amplia") {
-        agregarFilaPares(body, "Daños Materiales", seleccionadas, ".sumaSelect", ".dm__Input", "#dmAXA");
-        body[body.length - 1] = ["Daños Materiales", ...seleccionadas.flatMap(a => [obtenerSumaTexto(a.index), a.index === 0 ? document.getElementById("dmAXA").value || "-" : Array.from(document.querySelectorAll(".dm__Input"))[a.index - 1]?.value || "-"])];
-        agregarFilaPares(body, "Robo Total", seleccionadas, ".sumaRt__Input", ".rb__Input", "#rbAXA");
+        agregarFilaPares(body, "Daños Materiales", seleccionadas, ".sumaSelect", ".dm__Input");
+        agregarFilaPares(body, "Robo Total", seleccionadas, ".sumaRt__Input", ".rb__Input");
     }
-    if (tipoCobertura === "limitada") agregarFilaPares(body, "Robo Total", seleccionadas, ".sumaRt__Input", ".rb__Input", "#rbAXA");
+    if (tipoCobertura === "limitada") agregarFilaPares(body, "Robo Total", seleccionadas, ".sumaRt__Input", ".rb__Input");
 
     agregarFilaPares(body, "Responsabilidad Civil Daños a Terceros", seleccionadas, ".rc__Input", ".rcd__Input");
     if (!["particular", "motoapp"].includes(obtenerPlanSeleccionado())) agregarFilaPares(body, "Responsabilidad Civil Ocupantes", seleccionadas, ".rco__Input", ".rcoDed__Input");
