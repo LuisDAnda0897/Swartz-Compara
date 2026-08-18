@@ -809,6 +809,7 @@ async function generarPDF() {
     doc.text(`Nac: ${formatearFechaInput("clientBdy")}   C.P: ${document.getElementById("clientCP").value || "-"}`, 20, 52);
     doc.text(`Cobertura: ${obtenerTextoCobertura()}`, 92, 52);
     doc.text((correoAgente.textContent || "").replace("Correo:", "Correo: "), 176, 52, { maxWidth: 82 });
+    doc.text(extensionAgente.textContent || "", 176, 56, { maxWidth: 82 });
 
     doc.setDrawColor(...dorado);
     doc.setLineWidth(0.9);
