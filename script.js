@@ -620,6 +620,12 @@ function validarFormularioPDF() {
 
         const suma = document.getElementById(sumaIds[aseguradora.index]);
         const valor = document.getElementById(valorIds[aseguradora.index]);
+        if (!suma || suma.value === "Seleccione") {
+            faltantes.push({
+                nombre: `Tipo de suma asegurada de ${aseguradora.nombre}`,
+                elemento: suma
+            });
+        }
         if (suma && debeMostrarValor(suma.value) && !valor?.value.trim()) {
             faltantes.push({
                 nombre: `Valor de suma asegurada de ${aseguradora.nombre}`,
