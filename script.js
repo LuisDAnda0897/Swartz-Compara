@@ -83,6 +83,19 @@ function convertirPrecio(numeroTexto) {
     return Number(String(numeroTexto).replace(/[^0-9.]/g, "")) || Infinity;
 }
 
+function permitirSoloDigitos(input) {
+    input?.addEventListener("input", () => {
+        input.value = input.value.replace(/\D/g, "");
+    });
+}
+
+function permitirImporteNumerico(input) {
+    input.addEventListener("input", () => {
+        const partes = input.value.replace(/[^0-9.]/g, "").split(".");
+        input.value = partes.length > 1 ? `${partes.shift()}.${partes.join("")}` : partes[0];
+    });
+}
+
 function actualizarFecha() {
     fechaCoti.textContent = new Date().toLocaleDateString("es-MX", { day: "2-digit", month: "2-digit", year: "numeric" });
 }
@@ -990,6 +1003,9 @@ agenteSelect.addEventListener("change", () => {
 });
 
 actualizarFecha();
+permitirSoloDigitos(document.getElementById("clientCP"));
+permitirSoloDigitos(document.getElementById("unitYear"));
+document.querySelectorAll(".price__Input, .payment__Total, .payment__First, .payment__Next").forEach(permitirImporteNumerico);
 configurarSumasAseguradas();
 permitirSoloUno(["Femenino", "Masculino"]);
 permitirSoloUno(["unitModeUber", "unitModeMulti", "unitModeNormal", "unitModeMoto"]);
