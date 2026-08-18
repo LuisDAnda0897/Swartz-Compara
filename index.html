@@ -51,7 +51,7 @@
                     <input id="clientBdy" class="client__Input" placeholder="DD/MM/AAAA" type="date">
 
                     <label class="client__info" for="clientCP">C.P</label>
-                    <input id="clientCP" class="client__Input" placeholder="45130">
+                    <input id="clientCP" class="client__Input" inputmode="numeric" maxlength="5" placeholder="45130">
 
                     <label class="client__info side__Title">Sexo</label>
                     <div class="checkbox__Group side__Options">
@@ -75,7 +75,7 @@
                     <h1>Vehículo</h1>
 
                     <label class="unit__info" for="unitYear">Modelo</label>
-                    <input id="unitYear" class="unit__Input" placeholder="2025">
+                    <input id="unitYear" class="unit__Input" inputmode="numeric" maxlength="4" placeholder="2025">
 
                     <label class="unit__info" for="unitName">Descripción</label>
                     <input id="unitName" class="unit__Input" oninput="convertirMayus()" placeholder="NISSAN VERSA SENSE AUT">
@@ -168,12 +168,12 @@
                 <div class="price__Table">
 
                     <label class="price__Label">Costo Anual</label>
-                    <input class="price__Input" data-index="0" placeholder="$0.00">
-                    <input class="price__Input" data-index="1" placeholder="$0.00">
-                    <input class="price__Input" data-index="2" placeholder="$0.00">
-                    <input class="price__Input" data-index="3" placeholder="$0.00">
-                    <input class="price__Input" data-index="4" placeholder="$0.00">
-                    <input class="price__Input" data-index="5" placeholder="$0.00">
+                    <input class="price__Input" inputmode="decimal" data-index="0" placeholder="$0.00">
+                    <input class="price__Input" inputmode="decimal" data-index="1" placeholder="$0.00">
+                    <input class="price__Input" inputmode="decimal" data-index="2" placeholder="$0.00">
+                    <input class="price__Input" inputmode="decimal" data-index="3" placeholder="$0.00">
+                    <input class="price__Input" inputmode="decimal" data-index="4" placeholder="$0.00">
+                    <input class="price__Input" inputmode="decimal" data-index="5" placeholder="$0.00">
 
                     <label class="price__Label">Otras formas<br>de pago</label>
 
@@ -192,16 +192,16 @@
                         <label class="payment__Check"><input type="checkbox" class="payment__Mode" data-method="mensual"> Mensual</label>
                         <div class="payment__Breakdown oculto" data-method="semestral">
                             <span>Semestral</span>
-                            <input class="payment__Total" data-method="semestral" placeholder="Total">
-                            <input class="payment__First" data-method="semestral" placeholder="1er pago">
-                            <input class="payment__Next" data-method="semestral" placeholder="Segundo pago">
+                            <input class="payment__Total" inputmode="decimal" data-method="semestral" placeholder="Total">
+                            <input class="payment__First" inputmode="decimal" data-method="semestral" placeholder="1er pago">
+                            <input class="payment__Next" inputmode="decimal" data-method="semestral" placeholder="Segundo pago">
                             <em>Segundo pago <small>a los 6 meses</small></em>
                         </div>
                         <div class="payment__Breakdown oculto" data-method="mensual">
                             <span>Mensual</span>
-                            <input class="payment__Total" data-method="mensual" placeholder="Total">
-                            <input class="payment__First" data-method="mensual" placeholder="1er pago">
-                            <input class="payment__Next" data-method="mensual" placeholder="Pago mensual">
+                            <input class="payment__Total" inputmode="decimal" data-method="mensual" placeholder="Total">
+                            <input class="payment__First" inputmode="decimal" data-method="mensual" placeholder="1er pago">
+                            <input class="payment__Next" inputmode="decimal" data-method="mensual" placeholder="Pago mensual">
                             <em>Pago mensual</em>
                         </div>
                     </div>
@@ -213,23 +213,23 @@
                         <label class="payment__Check payment__MonthlyOption"><input type="checkbox" class="payment__Mode" data-method="mensual"> Mensual</label>
                         <div class="payment__Breakdown oculto" data-method="semestral">
                             <span>Semestral</span>
-                            <input class="payment__Total" data-method="semestral" placeholder="Total">
-                            <input class="payment__First" data-method="semestral" placeholder="1er pago">
-                            <input class="payment__Next" data-method="semestral" placeholder="Segundo pago">
+                            <input class="payment__Total" inputmode="decimal" data-method="semestral" placeholder="Total">
+                            <input class="payment__First" inputmode="decimal" data-method="semestral" placeholder="1er pago">
+                            <input class="payment__Next" inputmode="decimal" data-method="semestral" placeholder="Segundo pago">
                             <em>Segundo pago <small>a los 6 meses</small></em>
                         </div>
                         <div class="payment__Breakdown oculto" data-method="trimestral">
                             <span>Trimestral</span>
-                            <input class="payment__Total" data-method="trimestral" placeholder="Total">
-                            <input class="payment__First" data-method="trimestral" placeholder="1er pago">
-                            <input class="payment__Next" data-method="trimestral" placeholder="3 pagos mas">
+                            <input class="payment__Total" inputmode="decimal" data-method="trimestral" placeholder="Total">
+                            <input class="payment__First" inputmode="decimal" data-method="trimestral" placeholder="1er pago">
+                            <input class="payment__Next" inputmode="decimal" data-method="trimestral" placeholder="3 pagos mas">
                             <em>3 pagos mas <small>c/ 3 meses</small></em>
                         </div>
                         <div class="payment__Breakdown oculto" data-method="mensual">
                             <span>Mensual</span>
-                            <input class="payment__Total" data-method="mensual" placeholder="Total">
-                            <input class="payment__First" data-method="mensual" placeholder="1er pago">
-                            <input class="payment__Next" data-method="mensual" placeholder="Pago mensual">
+                            <input class="payment__Total" inputmode="decimal" data-method="mensual" placeholder="Total">
+                            <input class="payment__First" inputmode="decimal" data-method="mensual" placeholder="1er pago">
+                            <input class="payment__Next" inputmode="decimal" data-method="mensual" placeholder="Pago mensual">
                             <em>Pago mensual</em>
                         </div>
                     </div>
@@ -241,23 +241,23 @@
                         <label class="payment__Check payment__MonthlyOption"><input type="checkbox" class="payment__Mode" data-method="mensual"> Mensual</label>
                         <div class="payment__Breakdown oculto" data-method="semestral">
                             <span>Semestral</span>
-                            <input class="payment__Total" data-method="semestral" placeholder="Total">
-                            <input class="payment__First" data-method="semestral" placeholder="1er pago">
-                            <input class="payment__Next" data-method="semestral" placeholder="Segundo pago">
+                            <input class="payment__Total" inputmode="decimal" data-method="semestral" placeholder="Total">
+                            <input class="payment__First" inputmode="decimal" data-method="semestral" placeholder="1er pago">
+                            <input class="payment__Next" inputmode="decimal" data-method="semestral" placeholder="Segundo pago">
                             <em>Segundo pago <small>a los 6 meses</small></em>
                         </div>
                         <div class="payment__Breakdown oculto" data-method="trimestral">
                             <span>Trimestral</span>
-                            <input class="payment__Total" data-method="trimestral" placeholder="Total">
-                            <input class="payment__First" data-method="trimestral" placeholder="1er pago">
-                            <input class="payment__Next" data-method="trimestral" placeholder="3 pagos mas">
+                            <input class="payment__Total" inputmode="decimal" data-method="trimestral" placeholder="Total">
+                            <input class="payment__First" inputmode="decimal" data-method="trimestral" placeholder="1er pago">
+                            <input class="payment__Next" inputmode="decimal" data-method="trimestral" placeholder="3 pagos mas">
                             <em>3 pagos mas <small>c/ 3 meses</small></em>
                         </div>
                         <div class="payment__Breakdown oculto" data-method="mensual">
                             <span>Mensual</span>
-                            <input class="payment__Total" data-method="mensual" placeholder="Total">
-                            <input class="payment__First" data-method="mensual" placeholder="1er pago">
-                            <input class="payment__Next" data-method="mensual" placeholder="Pago mensual">
+                            <input class="payment__Total" inputmode="decimal" data-method="mensual" placeholder="Total">
+                            <input class="payment__First" inputmode="decimal" data-method="mensual" placeholder="1er pago">
+                            <input class="payment__Next" inputmode="decimal" data-method="mensual" placeholder="Pago mensual">
                             <em>Pago mensual</em>
                         </div>
                     </div>
@@ -269,23 +269,23 @@
                         <label class="payment__Check payment__MonthlyOption"><input type="checkbox" class="payment__Mode" data-method="mensual"> Mensual</label>
                         <div class="payment__Breakdown oculto" data-method="semestral">
                             <span>Semestral</span>
-                            <input class="payment__Total" data-method="semestral" placeholder="Total">
-                            <input class="payment__First" data-method="semestral" placeholder="1er pago">
-                            <input class="payment__Next" data-method="semestral" placeholder="Segundo pago">
+                            <input class="payment__Total" inputmode="decimal" data-method="semestral" placeholder="Total">
+                            <input class="payment__First" inputmode="decimal" data-method="semestral" placeholder="1er pago">
+                            <input class="payment__Next" inputmode="decimal" data-method="semestral" placeholder="Segundo pago">
                             <em>Segundo pago <small>a los 6 meses</small></em>
                         </div>
                         <div class="payment__Breakdown oculto" data-method="trimestral">
                             <span>Trimestral</span>
-                            <input class="payment__Total" data-method="trimestral" placeholder="Total">
-                            <input class="payment__First" data-method="trimestral" placeholder="1er pago">
-                            <input class="payment__Next" data-method="trimestral" placeholder="3 pagos mas">
+                            <input class="payment__Total" inputmode="decimal" data-method="trimestral" placeholder="Total">
+                            <input class="payment__First" inputmode="decimal" data-method="trimestral" placeholder="1er pago">
+                            <input class="payment__Next" inputmode="decimal" data-method="trimestral" placeholder="3 pagos mas">
                             <em>3 pagos mas <small>c/ 3 meses</small></em>
                         </div>
                         <div class="payment__Breakdown oculto" data-method="mensual">
                             <span>Mensual</span>
-                            <input class="payment__Total" data-method="mensual" placeholder="Total">
-                            <input class="payment__First" data-method="mensual" placeholder="1er pago">
-                            <input class="payment__Next" data-method="mensual" placeholder="Pago mensual">
+                            <input class="payment__Total" inputmode="decimal" data-method="mensual" placeholder="Total">
+                            <input class="payment__First" inputmode="decimal" data-method="mensual" placeholder="1er pago">
+                            <input class="payment__Next" inputmode="decimal" data-method="mensual" placeholder="Pago mensual">
                             <em>Pago mensual</em>
                         </div>
                     </div>
@@ -296,16 +296,16 @@
                         <label class="payment__Check payment__MonthlyOption"><input type="checkbox" class="payment__Mode" data-method="mensual"> Mensual</label>
                         <div class="payment__Breakdown oculto" data-method="semestral">
                             <span>Semestral</span>
-                            <input class="payment__Total" data-method="semestral" placeholder="Total">
-                            <input class="payment__First" data-method="semestral" placeholder="1er pago">
-                            <input class="payment__Next" data-method="semestral" placeholder="Segundo pago">
+                            <input class="payment__Total" inputmode="decimal" data-method="semestral" placeholder="Total">
+                            <input class="payment__First" inputmode="decimal" data-method="semestral" placeholder="1er pago">
+                            <input class="payment__Next" inputmode="decimal" data-method="semestral" placeholder="Segundo pago">
                             <em>Segundo pago <small>a los 6 meses</small></em>
                         </div>
                         <div class="payment__Breakdown oculto" data-method="mensual">
                             <span>Mensual</span>
-                            <input class="payment__Total" data-method="mensual" placeholder="Total">
-                            <input class="payment__First" data-method="mensual" placeholder="1er pago">
-                            <input class="payment__Next" data-method="mensual" placeholder="Pago mensual">
+                            <input class="payment__Total" inputmode="decimal" data-method="mensual" placeholder="Total">
+                            <input class="payment__First" inputmode="decimal" data-method="mensual" placeholder="1er pago">
+                            <input class="payment__Next" inputmode="decimal" data-method="mensual" placeholder="Pago mensual">
                             <em>Pago mensual</em>
                         </div>
                     </div>
@@ -317,23 +317,23 @@
                         <label class="payment__Check payment__MonthlyOption"><input type="checkbox" class="payment__Mode" data-method="mensual"> Mensual</label>
                         <div class="payment__Breakdown oculto" data-method="semestral">
                             <span>Semestral</span>
-                            <input class="payment__Total" data-method="semestral" placeholder="Total">
-                            <input class="payment__First" data-method="semestral" placeholder="1er pago">
-                            <input class="payment__Next" data-method="semestral" placeholder="Segundo pago">
+                            <input class="payment__Total" inputmode="decimal" data-method="semestral" placeholder="Total">
+                            <input class="payment__First" inputmode="decimal" data-method="semestral" placeholder="1er pago">
+                            <input class="payment__Next" inputmode="decimal" data-method="semestral" placeholder="Segundo pago">
                             <em>Segundo pago <small>a los 6 meses</small></em>
                         </div>
                         <div class="payment__Breakdown oculto" data-method="trimestral">
                             <span>Trimestral</span>
-                            <input class="payment__Total" data-method="trimestral" placeholder="Total">
-                            <input class="payment__First" data-method="trimestral" placeholder="1er pago">
-                            <input class="payment__Next" data-method="trimestral" placeholder="3 pagos mas">
+                            <input class="payment__Total" inputmode="decimal" data-method="trimestral" placeholder="Total">
+                            <input class="payment__First" inputmode="decimal" data-method="trimestral" placeholder="1er pago">
+                            <input class="payment__Next" inputmode="decimal" data-method="trimestral" placeholder="3 pagos mas">
                             <em>3 pagos mas <small>c/ 3 meses</small></em>
                         </div>
                         <div class="payment__Breakdown oculto" data-method="mensual">
                             <span>Mensual</span>
-                            <input class="payment__Total" data-method="mensual" placeholder="Total">
-                            <input class="payment__First" data-method="mensual" placeholder="1er pago">
-                            <input class="payment__Next" data-method="mensual" placeholder="Pago mensual">
+                            <input class="payment__Total" inputmode="decimal" data-method="mensual" placeholder="Total">
+                            <input class="payment__First" inputmode="decimal" data-method="mensual" placeholder="1er pago">
+                            <input class="payment__Next" inputmode="decimal" data-method="mensual" placeholder="Pago mensual">
                             <em>Pago mensual</em>
                         </div>
                     </div>
