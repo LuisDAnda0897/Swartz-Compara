@@ -128,7 +128,8 @@ body{
 
 .agent__Selector{
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: center;
     gap: 10px;
     width: 100%;
 }
@@ -417,7 +418,7 @@ main{
 }
 
 .agent__Data{
-    justify-self: center;
+    justify-self: start;
     width: 100%;
     max-width: 420px;
     min-width: 0;
