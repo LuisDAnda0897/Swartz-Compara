@@ -783,6 +783,7 @@ async function generarPDF() {
     const azul = [27, 85, 145], azulClaro = [239, 246, 255], dorado = [216, 163, 74], grisTexto = [24, 31, 42];
     const grisSuave = [246, 248, 251], grisLinea = [226, 232, 240], grisMuted = [102, 112, 133];
     const verdeColumna = [226, 247, 234], verdeCosto = [204, 245, 216];
+    const doradoColumna = [255, 248, 225], doradoCosto = [255, 239, 184];
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
 
@@ -962,6 +963,10 @@ async function generarPDF() {
                     data.cell.styles.fillColor = verdeColumna;
                     data.cell.styles.textColor = [20, 90, 45];
                     data.cell.styles.fontStyle = "bold";
+                } else if (costoIndex === masEconomicaIndex) {
+                    data.cell.styles.fillColor = doradoColumna;
+                    data.cell.styles.textColor = [140, 90, 20];
+                    data.cell.styles.fontStyle = "bold";
                 }
             }
             if (data.section === "body" && data.row.raw?.[0] === "MSI") {
@@ -994,7 +999,7 @@ async function generarPDF() {
                 if (data.column.index === 0) {
                     data.cell.styles.fillColor = azulClaro;
                     data.cell.styles.fontStyle = "bold";
-                } else if (data.cell.styles.fillColor !== verdeColumna) {
+                } else if (data.cell.styles.fillColor !== verdeColumna && data.cell.styles.fillColor !== doradoColumna) {
                     data.cell.styles.fillColor = [255, 252, 245];
                 }
             }
@@ -1006,8 +1011,9 @@ async function generarPDF() {
                 if (data.column.index > 0) {
                     const costoIndex = Math.floor((data.column.index - 1) / 2);
                     const esMejorOpcion = costoIndex === mejorOpcionIndex;
-                    data.cell.styles.textColor = esMejorOpcion ? [20, 120, 55] : [20, 80, 150];
-                    data.cell.styles.fillColor = esMejorOpcion ? verdeCosto : [239, 246, 255];
+                    const esMasEconomica = costoIndex === masEconomicaIndex;
+                    data.cell.styles.textColor = esMejorOpcion ? [20, 120, 55] : esMasEconomica ? [140, 90, 20] : [20, 80, 150];
+                    data.cell.styles.fillColor = esMejorOpcion ? verdeCosto : esMasEconomica ? doradoCosto : [239, 246, 255];
                 }
             }
         },
