@@ -83,6 +83,47 @@ function convertirPrecio(numeroTexto) {
     return Number(String(numeroTexto).replace(/[^0-9.]/g, "")) || Infinity;
 }
 
+function convertirCoberturaNumero(valor) {
+    const numero = Number(String(valor || "").replace(/[^0-9.]/g, ""));
+    return Number.isFinite(numero) ? numero : 0;
+}
+
+function obtenerValorCobertura(selector, aseguradoraIndex) {
+    return document.querySelectorAll(selector)[aseguradoraIndex]?.value || "";
+}
+
+function evaluarRelacionCoberturaPrecio(seleccionadas, preciosNumericos) {
+    const masEconomicaIndex = preciosNumericos.indexOf(Math.min(...preciosNumericos));
+    if (seleccionadas.length < 2) return { mejorOpcionIndex: masEconomicaIndex, masEconomicaIndex };
+
+    const metricas = [
+        { peso: 0.4, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerSumaTexto(a.index))) },
+        { peso: 0.3, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".rc__Input", a.index))) },
+        { peso: 0.2, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".gm__Input", a.index))) },
+        { peso: 0.1, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".ac__Input", a.index))) }
+    ].filter(metrica => metrica.valores.every(valor => valor > 0));
+
+    const pesoTotal = metricas.reduce((total, metrica) => total + metrica.peso, 0);
+    if (!pesoTotal) return { mejorOpcionIndex: masEconomicaIndex, masEconomicaIndex };
+
+    const puntajes = seleccionadas.map((_, index) => metricas.reduce((total, metrica) => {
+        const maximo = Math.max(...metrica.valores);
+        return total + (metrica.valores[index] / maximo) * metrica.peso;
+    }, 0) / pesoTotal);
+
+    const precioMinimo = preciosNumericos[masEconomicaIndex];
+    const candidatas = seleccionadas.map((_, index) => index)
+        .filter(index => preciosNumericos[index] <= precioMinimo * 1.10)
+        .sort((a, b) => puntajes[b] - puntajes[a] || preciosNumericos[a] - preciosNumericos[b]);
+    const candidataIndex = candidatas[0] ?? masEconomicaIndex;
+    const puntajeEconomica = puntajes[masEconomicaIndex];
+    const mejoraSuficiente = puntajeEconomica === 0
+        ? puntajes[candidataIndex] > 0
+        : puntajes[candidataIndex] >= puntajeEconomica * 1.15;
+
+    return { mejorOpcionIndex: mejoraSuficiente ? candidataIndex : masEconomicaIndex, masEconomicaIndex };
+}
+
 function permitirSoloDigitos(input) {
     input?.addEventListener("input", () => {
         input.value = input.value.replace(/\D/g, "");
@@ -734,7 +775,7 @@ async function generarPDF() {
     const costosSinFormato = seleccionadas.map(aseguradora => costosTodos[aseguradora.index]?.value || "-");
     const costos = costosSinFormato.map(formatoPesos);
     const preciosNumericos = costosSinFormato.map(convertirPrecio);
-    const precioMinimo = Math.min(...preciosNumericos);
+    const { mejorOpcionIndex, masEconomicaIndex } = evaluarRelacionCoberturaPrecio(seleccionadas, preciosNumericos);
     actualizarOpcionesPago();
     const formasPago = seleccionadas.map(aseguradora => obtenerFormasPagoDisponibles(aseguradora.index));
     const desglosesPago = seleccionadas.map(aseguradora => obtenerDesglosePago(aseguradora.index));
@@ -848,7 +889,12 @@ async function generarPDF() {
 
     const notaMsi = "El pago anual puede realizarse en una sola exhibicion o con tarjeta de credito a meses sin intereses, sujeto a autorizacion bancaria.";
     const body = [
-        ["Costo Anual", ...costos.map(costo => ({ content: `PAGO ANUAL\n${costo}\nMSI disponibles`, colSpan: 2 }))],
+        ["Costo Anual", ...costos.map((costo, index) => {
+            const etiqueta = index === mejorOpcionIndex
+                ? (index === masEconomicaIndex ? "MEJOR OPCIÓN · MÁS ECONÓMICA" : "MEJOR OPCIÓN")
+                : (index === masEconomicaIndex ? "MÁS ECONÓMICA" : "PAGO ANUAL");
+            return { content: `${etiqueta}\n${costo}\nMSI disponibles`, colSpan: 2 };
+        })],
         ["Otras formas de pago", ...formasPago.map(forma => ({ content: forma, colSpan: 2 }))]
     ];
 
@@ -912,7 +958,7 @@ async function generarPDF() {
         didParseCell: function (data) {
             if (data.section === "body" && data.column.index > 0) {
                 const costoIndex = Math.floor((data.column.index - 1) / 2);
-                if (preciosNumericos[costoIndex] === precioMinimo) {
+                if (costoIndex === mejorOpcionIndex) {
                     data.cell.styles.fillColor = verdeColumna;
                     data.cell.styles.textColor = [20, 90, 45];
                     data.cell.styles.fontStyle = "bold";
@@ -959,9 +1005,9 @@ async function generarPDF() {
                 data.cell.styles.fontStyle = "bold";
                 if (data.column.index > 0) {
                     const costoIndex = Math.floor((data.column.index - 1) / 2);
-                    const esMasBarato = preciosNumericos[costoIndex] === precioMinimo;
-                    data.cell.styles.textColor = esMasBarato ? [20, 120, 55] : [20, 80, 150];
-                    data.cell.styles.fillColor = esMasBarato ? verdeCosto : [239, 246, 255];
+                    const esMejorOpcion = costoIndex === mejorOpcionIndex;
+                    data.cell.styles.textColor = esMejorOpcion ? [20, 120, 55] : [20, 80, 150];
+                    data.cell.styles.fillColor = esMejorOpcion ? verdeCosto : [239, 246, 255];
                 }
             }
         },
