@@ -891,10 +891,12 @@ async function generarPDF() {
     const notaMsi = "El pago anual puede realizarse en una sola exhibicion o con tarjeta de credito a meses sin intereses, sujeto a autorizacion bancaria.";
     const body = [
         ["Costo Anual", ...costos.map((costo, index) => {
-            const etiqueta = index === mejorOpcionIndex
+            const distintivo = index === mejorOpcionIndex
                 ? (index === masEconomicaIndex ? "MEJOR OPCIÓN · MÁS ECONÓMICA" : "MEJOR OPCIÓN")
-                : (index === masEconomicaIndex ? "MÁS ECONÓMICA" : "PAGO ANUAL");
-            return { content: `${etiqueta}\n${costo}\nMSI disponibles`, colSpan: 2 };
+                : (index === masEconomicaIndex ? "MÁS ECONÓMICA" : "");
+            const lineas = ["PAGO ANUAL", costo, "MSI disponibles"];
+            if (distintivo) lineas.push(distintivo);
+            return { content: lineas.join("\n"), colSpan: 2 };
         })],
         ["Otras formas de pago", ...formasPago.map(forma => ({ content: forma, colSpan: 2 }))]
     ];
@@ -1006,7 +1008,7 @@ async function generarPDF() {
 
             if (data.section === "body" && data.row.index === 0) {
                 data.cell.styles.fontSize = data.column.index === 0 ? 8 : 8.8;
-                data.cell.styles.minCellHeight = 17;
+                data.cell.styles.minCellHeight = 20;
                 data.cell.styles.fontStyle = "bold";
                 if (data.column.index > 0) {
                     const costoIndex = Math.floor((data.column.index - 1) / 2);
