@@ -889,13 +889,11 @@ async function generarPDF() {
     const hayDesglosePago = desglosesPago.some(desglose => desglose !== "-");
 
     const notaMsi = "El pago anual puede realizarse en una sola exhibicion o con tarjeta de credito a meses sin intereses, sujeto a autorizacion bancaria.";
+    const obtenerDistintivo = (index) => index === mejorOpcionIndex
+        ? (index === masEconomicaIndex ? { texto: "MEJOR OPCIÓN · MÁS ECONÓMICA", tipo: "ambas" } : { texto: "MEJOR OPCIÓN", tipo: "mejor" })
+        : (index === masEconomicaIndex ? { texto: "MÁS ECONÓMICA", tipo: "economica" } : { texto: "", tipo: "" });
     const body = [
-        ["Costo Anual", ...costos.map((costo, index) => {
-            const etiqueta = index === mejorOpcionIndex
-                ? (index === masEconomicaIndex ? "MEJOR OPCIÓN · MÁS ECONÓMICA" : "MEJOR OPCIÓN")
-                : (index === masEconomicaIndex ? "MÁS ECONÓMICA" : "PAGO ANUAL");
-            return { content: `${etiqueta}\n${costo}\nMSI disponibles`, colSpan: 2 };
-        })],
+        ["Costo Anual", ...costos.map(costo => ({ content: `PAGO ANUAL\n${costo}\nMSI disponibles`, colSpan: 2 }))],
         ["Otras formas de pago", ...formasPago.map(forma => ({ content: forma, colSpan: 2 }))]
     ];
 
@@ -921,6 +919,13 @@ async function generarPDF() {
     agregarFilaPares(body, "Accidentes al Conductor", seleccionadas, ".ac__Input", ".acDed__Input");
     obtenerCoberturasAdicionalesPDF(seleccionadas).forEach((fila) => body.push(fila));
     body.push(["No. Cotización", ...seleccionadas.map(a => ({ content: valorDeLista(".quote__Input", a.index), colSpan: 2 }))]);
+    body.push([
+        { content: "", esDistincion: true },
+        ...seleccionadas.map((_, index) => {
+            const distintivo = obtenerDistintivo(index);
+            return { content: distintivo.texto, colSpan: 2, esDistincion: true, tipoDistincion: distintivo.tipo };
+        })
+    ]);
 
     const fontSizeTabla = body.length > 19 ? 5.2 : body.length > 16 ? 5.8 : 6.6;
     const altoMinimoTabla = body.length > 19 ? 5.9 : body.length > 16 ? 6.4 : 7.3;
@@ -991,6 +996,27 @@ async function generarPDF() {
                 data.cell.styles.fontStyle = "bold";
                 data.cell.styles.fontSize = data.column.index === 0 ? 6.8 : 7.2;
                 data.cell.styles.minCellHeight = 7.5;
+            }
+
+            if (data.section === "body" && data.row.raw?.[0]?.esDistincion) {
+                const tipoDistincion = data.cell.raw?.tipoDistincion || "";
+                data.cell.styles.minCellHeight = 8;
+                data.cell.styles.fontSize = 7.2;
+                data.cell.styles.fontStyle = "bold";
+                data.cell.styles.halign = "center";
+                data.cell.styles.lineWidth = tipoDistincion ? 0.2 : 0;
+                if (tipoDistincion === "mejor" || tipoDistincion === "ambas") {
+                    data.cell.styles.fillColor = verdeCosto;
+                    data.cell.styles.textColor = [20, 90, 45];
+                    data.cell.styles.lineColor = [120, 190, 140];
+                } else if (tipoDistincion === "economica") {
+                    data.cell.styles.fillColor = doradoCosto;
+                    data.cell.styles.textColor = [140, 90, 20];
+                    data.cell.styles.lineColor = [216, 163, 74];
+                } else {
+                    data.cell.styles.fillColor = [255, 255, 255];
+                    data.cell.styles.textColor = [255, 255, 255];
+                }
             }
 
             if (data.section === "body" && data.row.raw?.[0] === "Desglose de pagos") {
