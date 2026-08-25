@@ -361,8 +361,8 @@
                     <div class="coverage__SubHead">Suma asegurada</div>
                     <div class="coverage__SubHead">Deducible</div>
 
-                    <label class="deducible__Label rowDm">Daños Materiales</label>
-                    <div class="coverage__Cell rowDm">
+                    <label class="deducible__Label rowSuma">Tipo de suma asegurada</label>
+                    <div class="coverage__Cell rowSuma">
                         <select id="smaAXA" class="sumaSelect" data-index="0">
                             <option>Seleccione</option>
                             <option>Valor Factura</option>
@@ -372,8 +372,8 @@
                         </select>
                         <input id="valorAXA" class="valorInput" data-index="0" placeholder="Valor">
                     </div>
-                    <input id="dmAXA" class="coverage__Input dm__Input rowDm" placeholder="Deducible DM">
-                    <div class="coverage__Cell rowDm">
+                    <div class="coverage__Spacer rowSuma"></div>
+                    <div class="coverage__Cell rowSuma">
                         <select id="smaGNP" class="sumaSelect" data-index="1">
                             <option>Seleccione</option>
                             <option>Valor Factura</option>
@@ -383,8 +383,8 @@
                         </select>
                         <input id="valorGNP" class="valorInput" data-index="1" placeholder="Valor">
                     </div>
-                    <input class="coverage__Input dm__Input rowDm" placeholder="Deducible DM">
-                    <div class="coverage__Cell rowDm">
+                    <div class="coverage__Spacer rowSuma"></div>
+                    <div class="coverage__Cell rowSuma">
                         <select id="smaQual" class="sumaSelect" data-index="2">
                             <option>Seleccione</option>
                             <option>Valor Factura</option>
@@ -393,8 +393,8 @@
                         </select>
                         <input id="valorQua" class="valorInput" data-index="2" placeholder="Valor">
                     </div>
-                    <input class="coverage__Input dm__Input rowDm" placeholder="Deducible DM">
-                    <div class="coverage__Cell rowDm">
+                    <div class="coverage__Spacer rowSuma"></div>
+                    <div class="coverage__Cell rowSuma">
                         <select id="smaBanorte" class="sumaSelect" data-index="3">
                             <option>Seleccione</option>
                             <option>Valor Factura</option>
@@ -403,8 +403,8 @@
                         </select>
                         <input id="valorBanorte" class="valorInput" data-index="3" placeholder="Valor">
                     </div>
-                    <input class="coverage__Input dm__Input rowDm" placeholder="Deducible DM">
-                    <div class="coverage__Cell rowDm">
+                    <div class="coverage__Spacer rowSuma"></div>
+                    <div class="coverage__Cell rowSuma">
                         <select id="smaSPT" class="sumaSelect" data-index="4">
                             <option>Seleccione</option>
                             <option>Valor Factura</option>
@@ -413,8 +413,8 @@
                         </select>
                         <input id="valorSPT" class="valorInput" data-index="4" placeholder="Valor">
                     </div>
-                    <input class="coverage__Input dm__Input rowDm" placeholder="Deducible DM">
-                    <div class="coverage__Cell rowDm">
+                    <div class="coverage__Spacer rowSuma"></div>
+                    <div class="coverage__Cell rowSuma">
                         <select id="smaLatino" class="sumaSelect" data-index="5">
                             <option>Seleccione</option>
                             <option>Valor Factura</option>
@@ -423,6 +423,20 @@
                         </select>
                         <input id="valorLatino" class="valorInput" data-index="5" placeholder="Valor">
                     </div>
+                    <div class="coverage__Spacer rowSuma"></div>
+
+                    <label class="deducible__Label rowDm">Daños Materiales</label>
+                    <input class="coverage__Input sumaDm__Input rowDm" readonly placeholder="Suma DM">
+                    <input id="dmAXA" class="coverage__Input dm__Input rowDm" placeholder="Deducible DM">
+                    <input class="coverage__Input sumaDm__Input rowDm" readonly placeholder="Suma DM">
+                    <input class="coverage__Input dm__Input rowDm" placeholder="Deducible DM">
+                    <input class="coverage__Input sumaDm__Input rowDm" readonly placeholder="Suma DM">
+                    <input class="coverage__Input dm__Input rowDm" placeholder="Deducible DM">
+                    <input class="coverage__Input sumaDm__Input rowDm" readonly placeholder="Suma DM">
+                    <input class="coverage__Input dm__Input rowDm" placeholder="Deducible DM">
+                    <input class="coverage__Input sumaDm__Input rowDm" readonly placeholder="Suma DM">
+                    <input class="coverage__Input dm__Input rowDm" placeholder="Deducible DM">
+                    <input class="coverage__Input sumaDm__Input rowDm" readonly placeholder="Suma DM">
                     <input class="coverage__Input dm__Input rowDm" placeholder="Deducible DM">
 
                     <label class="deducible__Label rowRobo">Robo Total</label>
