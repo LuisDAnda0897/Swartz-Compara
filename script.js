@@ -261,8 +261,11 @@ function obtenerSumaTexto(index) {
 function sincronizarSumaAsegurada(index = null) {
     const indices = index === null ? [0, 1, 2, 3, 4, 5] : [index];
     indices.forEach((itemIndex) => {
+        const sumaTexto = obtenerSumaTexto(itemIndex);
+        const dmInput = document.querySelectorAll(".sumaDm__Input")[itemIndex];
         const rtInput = document.querySelectorAll(".sumaRt__Input")[itemIndex];
-        if (rtInput) rtInput.value = obtenerSumaTexto(itemIndex);
+        if (dmInput) dmInput.value = sumaTexto;
+        if (rtInput) rtInput.value = sumaTexto;
     });
 }
 
@@ -338,6 +341,7 @@ function actualizarVisibilidadPorPlan() {
 
 function actualizarVisibilidadCobertura() {
     const tipo = obtenerTipoCobertura();
+    setDisplayForElements(".rowSuma", tipo === "rc");
     setDisplayForElements(".rowDm", tipo === "limitada" || tipo === "rc");
     setDisplayForElements(".rowRobo", tipo === "rc");
 }
@@ -945,8 +949,21 @@ async function generarPDF() {
     body.push(subEncabezadoCoberturas);
 
     const tipoCobertura = obtenerTipoCobertura();
+    const mostrarTipoSuma = seleccionadas.some((aseguradora) => {
+        const suma = document.getElementById(sumaIds[aseguradora.index])?.value || "";
+        return debeMostrarValor(suma);
+    });
+    if (mostrarTipoSuma && tipoCobertura !== "rc") {
+        body.push([
+            "Tipo de suma asegurada",
+            ...seleccionadas.map((aseguradora) => ({
+                content: document.getElementById(sumaIds[aseguradora.index])?.value || "-",
+                colSpan: 2
+            }))
+        ]);
+    }
     if (tipoCobertura === "amplia") {
-        agregarFilaPares(body, "Daños Materiales", seleccionadas, ".sumaSelect", ".dm__Input");
+        agregarFilaPares(body, "Daños Materiales", seleccionadas, ".sumaDm__Input", ".dm__Input");
         agregarFilaPares(body, "Robo Total", seleccionadas, ".sumaRt__Input", ".rb__Input");
     }
     if (tipoCobertura === "limitada") agregarFilaPares(body, "Robo Total", seleccionadas, ".sumaRt__Input", ".rb__Input");
