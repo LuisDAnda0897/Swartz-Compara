@@ -83,9 +83,22 @@ function convertirPrecio(numeroTexto) {
     return Number(String(numeroTexto).replace(/[^0-9.]/g, "")) || Infinity;
 }
 
+const VALORES_UMA_DIARIA = {
+    2026: 117.31
+};
+
+function obtenerValorUmaDiaria() {
+    const anioActual = new Date().getFullYear();
+    if (VALORES_UMA_DIARIA[anioActual]) return VALORES_UMA_DIARIA[anioActual];
+    const ultimoAnio = Math.max(...Object.keys(VALORES_UMA_DIARIA).map(Number));
+    return VALORES_UMA_DIARIA[ultimoAnio];
+}
+
 function convertirCoberturaNumero(valor) {
-    const numero = Number(String(valor || "").replace(/[^0-9.]/g, ""));
-    return Number.isFinite(numero) ? numero : 0;
+    const texto = String(valor || "");
+    const numero = Number(texto.replace(/[^0-9.]/g, ""));
+    if (!Number.isFinite(numero)) return 0;
+    return /\bUMAs?\b/i.test(texto) ? numero * obtenerValorUmaDiaria() : numero;
 }
 
 function obtenerValorCobertura(selector, aseguradoraIndex) {
@@ -97,10 +110,12 @@ function evaluarRelacionCoberturaPrecio(seleccionadas, preciosNumericos) {
     if (seleccionadas.length < 2) return { mejorOpcionIndex: masEconomicaIndex, masEconomicaIndex };
 
     const metricas = [
-        { peso: 0.4, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerSumaTexto(a.index))) },
-        { peso: 0.3, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".rc__Input", a.index))) },
-        { peso: 0.2, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".gm__Input", a.index))) },
-        { peso: 0.1, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".ac__Input", a.index))) }
+        { peso: 0.25, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerSumaTexto(a.index))) },
+        { peso: 0.20, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".rc__Input", a.index))) },
+        { peso: 0.25, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".rco__Input", a.index))) },
+        { peso: 0.10, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".gm__Input", a.index))) },
+        { peso: 0.15, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".av__Input", a.index))) },
+        { peso: 0.05, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".ac__Input", a.index))) }
     ].filter(metrica => metrica.valores.every(valor => valor > 0));
 
     const pesoTotal = metricas.reduce((total, metrica) => total + metrica.peso, 0);
