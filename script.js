@@ -83,25 +83,65 @@ function convertirPrecio(numeroTexto) {
     return Number(String(numeroTexto).replace(/[^0-9.]/g, "")) || Infinity;
 }
 
+const VALORES_UMA_DIARIA = {
+    2026: 117.31
+};
+
+function obtenerValorUmaDiaria() {
+    const anioActual = new Date().getFullYear();
+    if (VALORES_UMA_DIARIA[anioActual]) return VALORES_UMA_DIARIA[anioActual];
+    const ultimoAnio = Math.max(...Object.keys(VALORES_UMA_DIARIA).map(Number));
+    return VALORES_UMA_DIARIA[ultimoAnio];
+}
+
 function convertirCoberturaNumero(valor) {
-    const numero = Number(String(valor || "").replace(/[^0-9.]/g, ""));
-    return Number.isFinite(numero) ? numero : 0;
+    const texto = String(valor || "");
+    const numero = Number(texto.replace(/[^0-9.]/g, ""));
+    if (!Number.isFinite(numero)) return 0;
+    return /\bUMAs?\b/i.test(texto) ? numero * obtenerValorUmaDiaria() : numero;
+}
+
+function convertirBeneficioCobertura(valor) {
+    const texto = String(valor || "").trim();
+    const normalizado = texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    if (!texto || ["-", "n/a", "na", "pendiente", "no aplica", "no incluida", "no incluido"].includes(normalizado)) return 0;
+    return convertirCoberturaNumero(texto) || 1;
 }
 
 function obtenerValorCobertura(selector, aseguradoraIndex) {
     return document.querySelectorAll(selector)[aseguradoraIndex]?.value || "";
 }
 
+function obtenerMetricasCoberturasAdicionales(seleccionadas) {
+    const filas = Array.from(document.querySelectorAll(".additionalCoverage__NameCell"));
+    if (!filas.length) return [];
+    const pesoPorCobertura = 0.15 / filas.length;
+
+    return filas.map((fila) => {
+        const rowId = fila.dataset.rowId;
+        const valores = seleccionadas.map((aseguradora) => {
+            const campos = [0, 1].map((parte) => document.querySelector(`.additionalCoverage__Input[data-row-id="${rowId}"][data-index="${aseguradora.index}"][data-part="${parte}"]`)?.value || "");
+            return Math.max(...campos.map(convertirBeneficioCobertura));
+        });
+        return { peso: pesoPorCobertura, valores, permiteAusencias: true };
+    });
+}
+
 function evaluarRelacionCoberturaPrecio(seleccionadas, preciosNumericos) {
     const masEconomicaIndex = preciosNumericos.indexOf(Math.min(...preciosNumericos));
     if (seleccionadas.length < 2) return { mejorOpcionIndex: masEconomicaIndex, masEconomicaIndex };
 
-    const metricas = [
-        { peso: 0.4, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerSumaTexto(a.index))) },
-        { peso: 0.3, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".rc__Input", a.index))) },
-        { peso: 0.2, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".gm__Input", a.index))) },
-        { peso: 0.1, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".ac__Input", a.index))) }
-    ].filter(metrica => metrica.valores.every(valor => valor > 0));
+    const metricasBase = [
+        { peso: 0.20, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerSumaTexto(a.index))), permiteAusencias: false },
+        { peso: 0.15, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".rc__Input", a.index))), permiteAusencias: true },
+        { peso: 0.20, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".rco__Input", a.index))), permiteAusencias: true },
+        { peso: 0.10, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".gm__Input", a.index))), permiteAusencias: true },
+        { peso: 0.10, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".av__Input", a.index))), permiteAusencias: true },
+        { peso: 0.05, valores: seleccionadas.map(a => convertirBeneficioCobertura(obtenerValorCobertura(".al__Input", a.index))), permiteAusencias: true },
+        { peso: 0.05, valores: seleccionadas.map(a => convertirCoberturaNumero(obtenerValorCobertura(".ac__Input", a.index))), permiteAusencias: true }
+    ];
+    const metricas = [...metricasBase, ...obtenerMetricasCoberturasAdicionales(seleccionadas)]
+        .filter((metrica) => metrica.valores.some(valor => valor > 0) && (metrica.permiteAusencias || metrica.valores.every(valor => valor > 0)));
 
     const pesoTotal = metricas.reduce((total, metrica) => total + metrica.peso, 0);
     if (!pesoTotal) return { mejorOpcionIndex: masEconomicaIndex, masEconomicaIndex };
