@@ -152,16 +152,20 @@ function evaluarRelacionCoberturaPrecio(seleccionadas, preciosNumericos) {
     }, 0) / pesoTotal);
 
     const precioMinimo = preciosNumericos[masEconomicaIndex];
+    const valorPorPrecio = puntajes.map((puntaje, index) => puntaje / (preciosNumericos[index] / precioMinimo));
     const candidatas = seleccionadas.map((_, index) => index)
         .filter(index => preciosNumericos[index] <= precioMinimo * 1.10)
-        .sort((a, b) => puntajes[b] - puntajes[a] || preciosNumericos[a] - preciosNumericos[b]);
+        .sort((a, b) => valorPorPrecio[b] - valorPorPrecio[a] || puntajes[b] - puntajes[a] || preciosNumericos[a] - preciosNumericos[b]);
     const candidataIndex = candidatas[0] ?? masEconomicaIndex;
     const puntajeEconomica = puntajes[masEconomicaIndex];
-    const mejoraSuficiente = puntajeEconomica === 0
+    const mejoraCobertura = puntajeEconomica === 0
         ? puntajes[candidataIndex] > 0
-        : puntajes[candidataIndex] >= puntajeEconomica * 1.15;
+        : puntajes[candidataIndex] > puntajeEconomica;
+    const mejoraValor = valorPorPrecio[masEconomicaIndex] === 0
+        ? valorPorPrecio[candidataIndex] > 0
+        : valorPorPrecio[candidataIndex] >= valorPorPrecio[masEconomicaIndex] * 1.02;
 
-    return { mejorOpcionIndex: mejoraSuficiente ? candidataIndex : masEconomicaIndex, masEconomicaIndex };
+    return { mejorOpcionIndex: mejoraCobertura && mejoraValor ? candidataIndex : masEconomicaIndex, masEconomicaIndex };
 }
 
 function permitirSoloDigitos(input) {
