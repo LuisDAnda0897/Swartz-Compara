@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Comercial | Swartz Seguros</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="../logo-Photoroom.png" alt="Swartz Seguros" class="brand-logo">
+      <div>
+        <p class="eyebrow">Swartz Seguros</p>
+        <h1>Dashboard Comercial</h1>
+        <p class="subtitle">Captura resultados, compara avances y genera un reporte listo para compartir.</p>
+      </div>
+    </div>
+    <div class="period-box">
+      <label for="periodo">Periodo</label>
+      <input id="periodo" type="month">
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section class="panel input-panel">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Captura</p>
+          <h2>Resultados por asesor</h2>
+        </div>
+        <div class="actions compact-actions">
+          <button id="btnAgregar" class="btn secondary" type="button">+ Agregar asesor</button>
+          <button id="btnEjemplo" class="btn ghost" type="button">Cargar ejemplo</button>
+          <button id="btnLimpiar" class="btn ghost danger" type="button">Limpiar</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="tablaAsesores">
+          <thead>
+            <tr>
+              <th>Asesor</th>
+              <th>Ciudad</th>
+              <th>Tipo</th>
+              <th>Meta</th>
+              <th>Ventas</th>
+              <th>Mes anterior</th>
+              <th>Referidos</th>
+              <th>Cotizaciones</th>
+              <th>AXA</th>
+              <th>GNP</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="asesoresBody"></tbody>
+        </table>
+      </div>
+      <p class="helper">Para asesores sin meta puedes dejar la meta en 0. El avance a meta solo se calcula cuando existe una meta mayor a 0.</p>
+    </section>
+
+    <section class="report-wrap" id="reporte">
+      <div class="report-header">
+        <div>
+          <p class="eyebrow">Resumen</p>
+          <h2 id="tituloReporte">Resultados comerciales</h2>
+          <p id="fechaReporte" class="muted"></p>
+        </div>
+        <span class="report-badge">Seguimiento interno</span>
+      </div>
+
+      <div class="kpi-grid">
+        <article class="kpi-card">
+          <span>Ventas</span>
+          <strong id="kpiVentas">0</strong>
+          <small id="kpiVentasDelta">Sin comparación</small>
+        </article>
+        <article class="kpi-card">
+          <span>Referidos</span>
+          <strong id="kpiReferidos">0</strong>
+          <small>Oportunidades originadas</small>
+        </article>
+        <article class="kpi-card">
+          <span>Avance global</span>
+          <strong id="kpiAvance">—</strong>
+          <small>Solo asesores con meta</small>
+        </article>
+        <article class="kpi-card">
+          <span>Mix AXA + GNP</span>
+          <strong id="kpiMix">0%</strong>
+          <small>Sobre ventas capturadas</small>
+        </article>
+      </div>
+
+      <div class="insight-grid">
+        <article class="insight-card winner-card">
+          <span class="insight-label">🔥 Mejor resultado</span>
+          <strong id="mejorAsesor">Sin datos</strong>
+          <p id="mejorAsesorDetalle">Agrega información para calcular el ranking.</p>
+        </article>
+        <article class="insight-card">
+          <span class="insight-label">📈 Mayor crecimiento</span>
+          <strong id="mayorCrecimiento">Sin datos</strong>
+          <p id="mayorCrecimientoDetalle">Comparación contra el mes anterior.</p>
+        </article>
+        <article class="insight-card">
+          <span class="insight-label">🎯 Mejor avance a meta</span>
+          <strong id="mejorMeta">Sin datos</strong>
+          <p id="mejorMetaDetalle">Solo considera metas mayores a 0.</p>
+        </article>
+      </div>
+
+      <div class="chart-grid">
+        <article class="chart-card">
+          <div class="chart-title-row">
+            <h3>Ventas por asesor</h3>
+            <span>Actual vs. mes anterior</span>
+          </div>
+          <div class="chart-box"><canvas id="chartVentas"></canvas></div>
+        </article>
+        <article class="chart-card">
+          <div class="chart-title-row">
+            <h3>Composición de ventas</h3>
+            <span>AXA, GNP y otras</span>
+          </div>
+          <div class="chart-box"><canvas id="chartMix"></canvas></div>
+        </article>
+        <article class="chart-card full-chart">
+          <div class="chart-title-row">
+            <h3>Avance a meta</h3>
+            <span>Porcentaje individual</span>
+          </div>
+          <div class="chart-box wide"><canvas id="chartMeta"></canvas></div>
+        </article>
+      </div>
+
+      <article class="ranking-card">
+        <div class="chart-title-row">
+          <h3>Ranking del periodo</h3>
+          <span id="rankingCount">0 asesores</span>
+        </div>
+        <div id="rankingList" class="ranking-list">
+          <p class="empty-state">Captura resultados para mostrar el ranking.</p>
+        </div>
+      </article>
+
+      <article class="notes-card">
+        <label for="notas">Notas del reporte</label>
+        <textarea id="notas" rows="3" placeholder="Ej. Este mes el enfoque comercial está en AXA y GNP particular. Reconocer crecimiento, constancia y calidad de referidos."></textarea>
+      </article>
+    </section>
+
+    <section class="export-panel panel">
+      <div>
+        <p class="eyebrow">Exportar</p>
+        <h2>Comparte el corte</h2>
+        <p class="muted">Genera una imagen PNG o un PDF con el resumen, gráficas y ranking.</p>
+      </div>
+      <div class="actions">
+        <button id="btnImagen" class="btn secondary" type="button">Descargar imagen</button>
+        <button id="btnPdf" class="btn primary" type="button">Generar PDF</button>
+      </div>
+    </section>
+  </main>
+
+  <template id="filaTemplate">
+    <tr>
+      <td><input class="cell-input nombre" type="text" placeholder="Nombre"></td>
+      <td>
+        <select class="cell-input ciudad">
+          <option value="GDL">GDL</option>
+          <option value="MTY">MTY</option>
+          <option value="CHIH">Chihuahua</option>
+          <option value="TIJ">Tijuana</option>
+          <option value="Otra">Otra</option>
+        </select>
+      </td>
+      <td>
+        <select class="cell-input tipo">
+          <option value="Referidos">Referidos</option>
+          <option value="Independiente">Independiente</option>
+        </select>
+      </td>
+      <td><input class="cell-input numeric meta" type="number" min="0" step="1" value="0"></td>
+      <td><input class="cell-input numeric ventas" type="number" min="0" step="1" value="0"></td>
+      <td><input class="cell-input numeric anterior" type="number" min="0" step="1" value="0"></td>
+      <td><input class="cell-input numeric referidos" type="number" min="0" step="1" value="0"></td>
+      <td><input class="cell-input numeric cotizaciones" type="number" min="0" step="1" value="0"></td>
+      <td><input class="cell-input numeric axa" type="number" min="0" step="1" value="0"></td>
+      <td><input class="cell-input numeric gnp" type="number" min="0" step="1" value="0"></td>
+      <td><button class="remove-row" type="button" aria-label="Eliminar asesor">×</button></td>
+    </tr>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
