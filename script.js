@@ -227,6 +227,10 @@ function obtenerTextoPlan() {
     return "-";
 }
 
+function obtenerTextoComparacion() {
+    return document.getElementById("comparisonType")?.value === "renovacion" ? "Renovación" : "Póliza nueva";
+}
+
 function obtenerTipoCobertura() {
     if (document.getElementById("coberturaAmplia").checked) return "amplia";
     if (document.getElementById("coberturaLimitada").checked) return "limitada";
@@ -413,6 +417,53 @@ function obtenerDesglosePago(index) {
     return `${label}\nTotal: ${formatoPesos(total)}\n1er pago: ${formatoPesos(first)}\n${nextLabels[method]}: ${formatoPesos(next)}`;
 }
 
+function actualizarRenovacion() {
+    const esRenovacion = document.getElementById("comparisonType")?.value === "renovacion";
+    const seleccionActual = document.querySelector(".currentInsurer__Check:checked");
+
+    document.querySelectorAll(".renewalPremium__Row").forEach((elemento) => {
+        if (!elemento.classList.contains("renewalCurrent__Cell")) {
+            elemento.hidden = !esRenovacion;
+        }
+    });
+
+    document.querySelectorAll(".renewalCurrent__Cell").forEach((celda) => {
+        const check = celda.querySelector(".currentInsurer__Check");
+        const input = celda.querySelector(".previousPremium__Input");
+        const estaSeleccionada = check?.checked;
+        const indice = Number(check?.dataset.index);
+
+        celda.hidden = !esRenovacion || Boolean(seleccionActual && check !== seleccionActual);
+        if (esRenovacion && estaSeleccionada && aseguradoras[indice]) {
+            document.getElementById(aseguradoras[indice].checkId).checked = true;
+        }
+        if (input) {
+            input.hidden = !esRenovacion || !estaSeleccionada;
+            if (!estaSeleccionada) input.value = "";
+        }
+        if (!esRenovacion && check) check.checked = false;
+    });
+}
+
+function obtenerPrimasAnterioresPDF(seleccionadas) {
+    const esRenovacion = document.getElementById("comparisonType")?.value === "renovacion";
+    const checkActual = document.querySelector(".currentInsurer__Check:checked");
+    if (!esRenovacion || !checkActual) return null;
+
+    const indiceActual = Number(checkActual.dataset.index);
+    if (!seleccionadas.some((aseguradora) => aseguradora.index === indiceActual)) return null;
+
+    return [
+        "Prima anterior",
+        ...seleccionadas.map((aseguradora) => ({
+            content: aseguradora.index === indiceActual
+                ? formatoPesos(document.querySelector(`.previousPremium__Input[data-index="${indiceActual}"]`)?.value || "")
+                : "-",
+            colSpan: 2
+        }))
+    ];
+}
+
 function actualizarVisibilidadMensual() {
     const mostrarMensual = obtenerPlanSeleccionado() === "particular";
 
@@ -531,6 +582,7 @@ function limpiarFormulario() {
     extensionAgente.textContent = "Tel: 33 2878 5446 Ext:";
     document.querySelectorAll(".valorInput").forEach((input) => input.classList.add("valorOculto"));
     document.querySelectorAll(".payment__Mode").forEach((check) => check.checked = false);
+    actualizarRenovacion();
     actualizarOpcionesPago();
     sincronizarSumaAsegurada();
     actualizarVisibilidadPorPlan();
@@ -897,6 +949,11 @@ async function generarPDF() {
     doc.setFont(undefined, "bold");
     doc.setFontSize(6.8);
     doc.text(`PLAN ${obtenerTextoPlan().toUpperCase()}`, 67, 29.2);
+    doc.setFillColor(239, 246, 255);
+    doc.setDrawColor(191, 219, 254);
+    doc.roundedRect(108, 24, 47, 8, 4, 4, "FD");
+    doc.setTextColor(...azul);
+    doc.text(obtenerTextoComparacion().toUpperCase(), 113, 29.2);
 
     doc.setFillColor(255, 255, 255);
     doc.setDrawColor(...grisLinea);
@@ -944,6 +1001,11 @@ async function generarPDF() {
         ["Costo Anual", ...costos.map(costo => ({ content: `PAGO ANUAL\n${costo}\nMSI disponibles`, colSpan: 2 }))],
         ["Otras formas de pago", ...formasPago.map(forma => ({ content: forma, colSpan: 2 }))]
     ];
+
+    const primasAnteriores = obtenerPrimasAnterioresPDF(seleccionadas);
+    if (primasAnteriores) {
+        body.splice(1, 0, primasAnteriores);
+    }
 
     if (hayDesglosePago) {
         body.push(["Desglose de pagos", ...desglosesPago.map(desglose => ({ content: desglose, colSpan: 2 }))]);
@@ -1046,6 +1108,15 @@ async function generarPDF() {
                     data.cell.styles.halign = "left";
                 }
             }
+            if (data.section === "body" && data.row.raw?.[0] === "Prima anterior") {
+                data.cell.styles.fillColor = data.column.index === 0 ? [232, 242, 255] : [248, 251, 255];
+                data.cell.styles.textColor = grisTexto;
+                data.cell.styles.minCellHeight = 8.5;
+                data.cell.styles.fontSize = data.column.index === 0 ? 7.3 : 7.4;
+                if (data.column.index === 0) {
+                    data.cell.styles.fontStyle = "bold";
+                }
+            }
             if (data.section === "body" && data.row.raw?.esAdicional) {
                 data.cell.styles.fillColor = data.column.index === 0 ? [244, 247, 251] : [255, 255, 255];
                 data.cell.styles.textColor = grisTexto;
@@ -1144,7 +1215,9 @@ agenteSelect.addEventListener("change", () => {
 actualizarFecha();
 permitirSoloDigitos(document.getElementById("clientCP"));
 permitirSoloDigitos(document.getElementById("unitYear"));
-document.querySelectorAll(".price__Input, .payment__Total, .payment__First, .payment__Next").forEach(permitirImporteNumerico);
+document.querySelectorAll(".price__Input, .previousPremium__Input, .payment__Total, .payment__First, .payment__Next").forEach(permitirImporteNumerico);
+document.getElementById("comparisonType")?.addEventListener("change", actualizarRenovacion);
+document.querySelectorAll(".currentInsurer__Check").forEach((check) => check.addEventListener("change", actualizarRenovacion));
 configurarSumasAseguradas();
 permitirSoloUno(["Femenino", "Masculino"]);
 permitirSoloUno(["unitModeUber", "unitModeMulti", "unitModeNormal", "unitModeMoto"]);
@@ -1157,4 +1230,5 @@ document.getElementById("limpiarFormulario").addEventListener("click", limpiarFo
 llenarDeduciblesSinDeducible();
 sincronizarSumaAsegurada();
 actualizarOpcionesPago();
+actualizarRenovacion();
 actualizarVisibilidadCobertura();

@@ -124,6 +124,14 @@
                             <input type="checkbox" id="coberturaRC">
                         </label>
                     </div>
+
+                    <div class="renewal__Panel">
+                        <label class="unit__info" for="comparisonType">Comparación</label>
+                        <select id="comparisonType" class="unit__Input">
+                            <option value="nueva">Póliza nueva</option>
+                            <option value="renovacion">Renovación de póliza</option>
+                        </select>
+                    </div>
                 </div>
             </section>
 
@@ -174,6 +182,32 @@
                     <input class="price__Input" inputmode="decimal" data-index="3" placeholder="$0.00">
                     <input class="price__Input" inputmode="decimal" data-index="4" placeholder="$0.00">
                     <input class="price__Input" inputmode="decimal" data-index="5" placeholder="$0.00">
+
+                    <label class="price__Label renewalPremium__Row" hidden>Póliza actual</label>
+                    <div class="renewalCurrent__Cell renewalPremium__Row" data-index="0" hidden>
+                        <label class="renewalCurrent__Choice"><input type="checkbox" class="currentInsurer__Check" data-index="0"> Actual</label>
+                        <input class="previousPremium__Input" inputmode="decimal" data-index="0" placeholder="Prima anterior" hidden>
+                    </div>
+                    <div class="renewalCurrent__Cell renewalPremium__Row" data-index="1" hidden>
+                        <label class="renewalCurrent__Choice"><input type="checkbox" class="currentInsurer__Check" data-index="1"> Actual</label>
+                        <input class="previousPremium__Input" inputmode="decimal" data-index="1" placeholder="Prima anterior" hidden>
+                    </div>
+                    <div class="renewalCurrent__Cell renewalPremium__Row" data-index="2" hidden>
+                        <label class="renewalCurrent__Choice"><input type="checkbox" class="currentInsurer__Check" data-index="2"> Actual</label>
+                        <input class="previousPremium__Input" inputmode="decimal" data-index="2" placeholder="Prima anterior" hidden>
+                    </div>
+                    <div class="renewalCurrent__Cell renewalPremium__Row" data-index="3" hidden>
+                        <label class="renewalCurrent__Choice"><input type="checkbox" class="currentInsurer__Check" data-index="3"> Actual</label>
+                        <input class="previousPremium__Input" inputmode="decimal" data-index="3" placeholder="Prima anterior" hidden>
+                    </div>
+                    <div class="renewalCurrent__Cell renewalPremium__Row" data-index="4" hidden>
+                        <label class="renewalCurrent__Choice"><input type="checkbox" class="currentInsurer__Check" data-index="4"> Actual</label>
+                        <input class="previousPremium__Input" inputmode="decimal" data-index="4" placeholder="Prima anterior" hidden>
+                    </div>
+                    <div class="renewalCurrent__Cell renewalPremium__Row" data-index="5" hidden>
+                        <label class="renewalCurrent__Choice"><input type="checkbox" class="currentInsurer__Check" data-index="5"> Actual</label>
+                        <input class="previousPremium__Input" inputmode="decimal" data-index="5" placeholder="Prima anterior" hidden>
+                    </div>
 
                     <label class="price__Label">Otras formas<br>de pago</label>
 

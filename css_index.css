@@ -487,6 +487,15 @@ main{
     white-space: nowrap;
 }
 
+.renewal__Panel {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 115px minmax(240px, 370px);
+    gap: 10px 40px;
+    align-items: center;
+    margin-top: 8px;
+}
+
 
 .action__Buttons {
     display: flex;
@@ -651,6 +660,31 @@ main{
 .price__Input:nth-of-type(6),
 .payment__Options:nth-of-type(6) { grid-column: 12 / 14; }
 
+.price__Input:nth-of-type(7) { grid-column: 2 / 4; }
+.price__Input:nth-of-type(8) { grid-column: 4 / 6; }
+.price__Input:nth-of-type(9) { grid-column: 6 / 8; }
+.price__Input:nth-of-type(10) { grid-column: 8 / 10; }
+.price__Input:nth-of-type(11) { grid-column: 10 / 12; }
+.price__Input:nth-of-type(12) { grid-column: 12 / 14; }
+
+.renewalCurrent__Cell[data-index="0"],
+.payment__Options[data-index="0"] { grid-column: 2 / 4; }
+
+.renewalCurrent__Cell[data-index="1"],
+.payment__Options[data-index="1"] { grid-column: 4 / 6; }
+
+.renewalCurrent__Cell[data-index="2"],
+.payment__Options[data-index="2"] { grid-column: 6 / 8; }
+
+.renewalCurrent__Cell[data-index="3"],
+.payment__Options[data-index="3"] { grid-column: 8 / 10; }
+
+.renewalCurrent__Cell[data-index="4"],
+.payment__Options[data-index="4"] { grid-column: 10 / 12; }
+
+.renewalCurrent__Cell[data-index="5"],
+.payment__Options[data-index="5"] { grid-column: 12 / 14; }
+
 .coverage__SubHead {
     background-color: #eef6ff;
     border-color: #cfe0f5;
@@ -779,6 +813,45 @@ main{
     width: 170px;
     max-width: 170px;
     justify-self: center;
+}
+
+.renewalCurrent__Cell {
+    display: flex;
+    flex-direction: column;
+    justify-self: center;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+}
+
+.renewalCurrent__Choice {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #7c4a11;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.renewalCurrent__Choice input {
+    width: 15px;
+    height: 15px;
+}
+
+.price__Table .previousPremium__Input {
+    width: 100%;
+    max-width: 170px;
+    text-align: center;
+    font-weight: 700;
+    color: #7c4a11;
+    background-color: #fffbeb;
+    border-color: #f3d28b;
+}
+
+.renewalPremium__Row[hidden],
+.renewalCurrent__Cell[hidden],
+.previousPremium__Input[hidden] {
+    display: none;
 }
 
 .action__Buttons {
@@ -945,6 +1018,12 @@ main{
     .unit__ChoicePanel {
         align-self: center;
     }
+
+    .renewal__Panel {
+        grid-template-columns: 92px minmax(0, 1fr);
+        gap: 8px 14px;
+    }
+
 }
 
 @media (max-width: 1180px) {
@@ -961,6 +1040,10 @@ main{
     .unit__Data {
         grid-template-columns: 105px minmax(0, 1fr) 150px;
     }
+
+    .renewal__Panel {
+        grid-template-columns: 105px minmax(0, 1fr);
+    }
 }
 
 @media (max-width: 760px) {
@@ -976,9 +1059,14 @@ main{
     .side__Title,
     .side__Options,
     .unit__ChoicePanel,
-    .unit__CoveragePanel {
+    .unit__CoveragePanel,
+    .renewal__Panel {
         grid-column: 1;
         grid-row: auto;
+    }
+
+    .renewal__Panel {
+        grid-template-columns: 1fr;
     }
 
     .side__Options,
