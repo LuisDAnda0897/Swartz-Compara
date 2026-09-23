@@ -1120,10 +1120,10 @@ async function generarPDF() {
             if (data.section === "body" && data.row.raw?.[0] === "Prima anterior") {
                 if (data.column.index === 0) {
                     // Estilo de la celda del título "Prima anterior"
-                    data.cell.styles.fillColor = [232, 242, 255];
-                    data.cell.styles.textColor = grisTexto;
+                    data.cell.styles.fillColor = [255, 237, 213];
+                    data.cell.styles.textColor = [194, 65, 12];
                     data.cell.styles.fontStyle = "bold";
-                    data.cell.styles.fontSize = 7.3;
+                    data.cell.styles.fontSize = 7.6;
                 } else {
                     // Verificar si es la celda que tiene el valor de la Prima Anterior
                     const esCeldaConValor = data.cell.raw?.esPrimaValor || (data.cell.raw?.content && data.cell.raw.content !== "-");
@@ -1133,7 +1133,7 @@ async function generarPDF() {
                         data.cell.styles.fillColor = [255, 237, 213];
                         data.cell.styles.textColor = [194, 65, 12];  
                         data.cell.styles.fontStyle = "bold";
-                        data.cell.styles.fontSize = 7.6;
+                        data.cell.styles.fontSize = 8;
                     } else {
                         // Estilo normal para las celdas con "-" (sin resalte)
                         data.cell.styles.fillColor = [248, 251, 255];
