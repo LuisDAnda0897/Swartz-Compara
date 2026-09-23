@@ -712,7 +712,7 @@ function validarFormularioPDF() {
 
     if (!comparisonType || !comparisonType.value) {
         faltantes.push({
-            nombre: "Comparación",
+            nombre: "Tipo de Comparación",
             elemento: comparisonType
         });
     }
