@@ -460,6 +460,7 @@ function obtenerPrimasAnterioresPDF(seleccionadas) {
                 ? formatoPesos(document.querySelector(`.previousPremium__Input[data-index="${indiceActual}"]`)?.value || "")
                 : "-",
             colSpan: 2
+            esPrimaValor: aseguradora.index === indiceActual
         }))
     ];
 }
@@ -1117,13 +1118,30 @@ async function generarPDF() {
                 }
             }
             if (data.section === "body" && data.row.raw?.[0] === "Prima anterior") {
-                data.cell.styles.fillColor = data.column.index === 0 ? [232, 242, 255] : [248, 251, 255];
-                data.cell.styles.textColor = grisTexto;
-                data.cell.styles.minCellHeight = 8.5;
-                data.cell.styles.fontSize = data.column.index === 0 ? 7.3 : 7.4;
                 if (data.column.index === 0) {
+                    // Estilo de la celda del título "Prima anterior"
+                    data.cell.styles.fillColor = [232, 242, 255];
+                    data.cell.styles.textColor = grisTexto;
                     data.cell.styles.fontStyle = "bold";
+                    data.cell.styles.fontSize = 7.3;
+                } else {
+                    // Verificar si es la celda que tiene el valor de la Prima Anterior
+                    const esCeldaConValor = data.cell.raw?.esPrimaValor || (data.cell.raw?.content && data.cell.raw.content !== "-");
+            
+                    if (esCeldaConValor) {
+                        // --- RESALTE ÚNICO PARA LA CELDA CON VALOR ---
+                        data.cell.styles.fillColor = [255, 237, 213];
+                        data.cell.styles.textColor = [194, 65, 12];  
+                        data.cell.styles.fontStyle = "bold";
+                        data.cell.styles.fontSize = 7.6;
+                    } else {
+                        // Estilo normal para las celdas con "-" (sin resalte)
+                        data.cell.styles.fillColor = [248, 251, 255];
+                        data.cell.styles.textColor = grisMuted;
+                        data.cell.styles.fontSize = 7.4;
+                    }
                 }
+                data.cell.styles.minCellHeight = 8.5;
             }
             if (data.section === "body" && data.row.raw?.esAdicional) {
                 data.cell.styles.fillColor = data.column.index === 0 ? [244, 247, 251] : [255, 255, 255];
