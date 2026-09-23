@@ -662,6 +662,7 @@ function validarFormularioPDF() {
     const agenteSelect = document.getElementById("agenteSelect");
     const femenino = document.getElementById("Femenino");
     const masculino = document.getElementById("Masculino");
+    const comparisonType = document.getElementById("comparisonType");
 
     document.querySelectorAll(".campo-faltante").forEach(campo => {
         campo.classList.remove("campo-faltante");
@@ -706,6 +707,13 @@ function validarFormularioPDF() {
         faltantes.push({
             nombre: "Agente",
             elemento: agenteSelect
+        });
+    }
+
+    if (!comparisonType || !comparisonType.value) {
+        faltantes.push({
+            nombre: "Comparación",
+            elemento: comparisonType
         });
     }
 
