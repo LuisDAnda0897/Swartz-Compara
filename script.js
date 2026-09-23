@@ -459,7 +459,7 @@ function obtenerPrimasAnterioresPDF(seleccionadas) {
             content: aseguradora.index === indiceActual
                 ? formatoPesos(document.querySelector(`.previousPremium__Input[data-index="${indiceActual}"]`)?.value || "")
                 : "-",
-            colSpan: 2
+            colSpan: 2,
             esPrimaValor: aseguradora.index === indiceActual
         }))
     ];
