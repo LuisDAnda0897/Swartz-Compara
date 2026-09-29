@@ -454,7 +454,7 @@ function obtenerPrimasAnterioresPDF(seleccionadas) {
     if (!seleccionadas.some((aseguradora) => aseguradora.index === indiceActual)) return null;
 
     return [
-        "Prima anterior",
+        "Costo anterior",
         ...seleccionadas.map((aseguradora) => ({
             content: aseguradora.index === indiceActual
                 ? formatoPesos(document.querySelector(`.previousPremium__Input[data-index="${indiceActual}"]`)?.value || "")
@@ -1117,7 +1117,7 @@ async function generarPDF() {
                     data.cell.styles.halign = "left";
                 }
             }
-            if (data.section === "body" && data.row.raw?.[0] === "Prima anterior") {
+            if (data.section === "body" && data.row.raw?.[0] === "Costo anterior") {
                 if (data.column.index === 0) {
                     // Estilo de la celda del título "Prima anterior"
                     data.cell.styles.fillColor = [255, 237, 213];
