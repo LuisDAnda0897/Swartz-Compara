@@ -454,15 +454,30 @@ function obtenerPrimasAnterioresPDF(seleccionadas) {
     if (!seleccionadas.some((aseguradora) => aseguradora.index === indiceActual)) return null;
 
     return [
-        "Costo anterior",
+        "Prima anterior",
         ...seleccionadas.map((aseguradora) => ({
             content: aseguradora.index === indiceActual
-                ? formatoPesos(document.querySelector(`.previousPremium__Input[data-index="${indiceActual}"]`)?.value || "")
+                ? `PRIMA ANTERIOR\n${formatoPesos(document.querySelector(`.previousPremium__Input[data-index="${indiceActual}"]`)?.value || "")}`
                 : "-",
             colSpan: 2,
             esPrimaValor: aseguradora.index === indiceActual
         }))
     ];
+}
+
+function obtenerAseguradoraActualPDF() {
+    if (document.getElementById("comparisonType")?.value !== "renovacion") return null;
+
+    const checkActual = document.querySelector(".currentInsurer__Check:checked");
+    const indice = Number(checkActual?.dataset.index);
+    const aseguradora = aseguradoras[indice];
+    if (!aseguradora) return null;
+
+    return {
+        indice,
+        nombre: aseguradora.nombre,
+        primaAnterior: formatoPesos(document.querySelector(`.previousPremium__Input[data-index="${indice}"]`)?.value || "")
+    };
 }
 
 function actualizarVisibilidadMensual() {
@@ -964,6 +979,17 @@ async function generarPDF() {
     doc.setTextColor(...azul);
     doc.text(obtenerTextoComparacion().toUpperCase(), 113, 29.2);
 
+    const aseguradoraActualPDF = obtenerAseguradoraActualPDF();
+    if (aseguradoraActualPDF) {
+        doc.setFillColor(255, 237, 213);
+        doc.setDrawColor(253, 186, 116);
+        doc.roundedRect(159, 24, 51, 8, 4, 4, "FD");
+        doc.setTextColor(194, 65, 12);
+        doc.setFont(undefined, "bold");
+        doc.setFontSize(6.6);
+        doc.text(`ACTUAL: ${aseguradoraActualPDF.nombre.toUpperCase()}`, 163, 29.2, { maxWidth: 43 });
+    }
+
     doc.setFillColor(255, 255, 255);
     doc.setDrawColor(...grisLinea);
     doc.roundedRect(14, 35, 251, 22, 3, 3, "FD");
@@ -1007,7 +1033,12 @@ async function generarPDF() {
         ? (index === masEconomicaIndex ? { texto: "MEJOR OPCIÓN · MÁS ECONÓMICA", tipo: "ambas" } : { texto: "MEJOR OPCIÓN", tipo: "mejor" })
         : (index === masEconomicaIndex ? { texto: "MÁS ECONÓMICA", tipo: "economica" } : { texto: "", tipo: "" });
     const body = [
-        ["Costo Anual", ...costos.map(costo => ({ content: `PAGO ANUAL\n${costo}\nMSI disponibles`, colSpan: 2 }))],
+        ["Costo Anual", ...costos.map((costo, index) => ({
+            content: aseguradoraActualPDF?.indice === seleccionadas[index]?.index
+                ? `NUEVO COSTO\n${costo}\nMSI disponibles`
+                : `PAGO ANUAL\n${costo}\nMSI disponibles`,
+            colSpan: 2
+        }))],
         ["Otras formas de pago", ...formasPago.map(forma => ({ content: forma, colSpan: 2 }))]
     ];
 
@@ -1117,7 +1148,7 @@ async function generarPDF() {
                     data.cell.styles.halign = "left";
                 }
             }
-            if (data.section === "body" && data.row.raw?.[0] === "Costo anterior") {
+            if (data.section === "body" && data.row.raw?.[0] === "Prima anterior") {
                 if (data.column.index === 0) {
                     // Estilo de la celda del título "Prima anterior"
                     data.cell.styles.fillColor = [255, 237, 213];
@@ -1200,11 +1231,29 @@ async function generarPDF() {
                     data.cell.styles.fillColor = esMejorOpcion ? verdeCosto : esMasEconomica ? doradoCosto : [239, 246, 255];
                 }
             }
+
+            if (data.section === "body" && aseguradoraActualPDF && data.column.index > 0) {
+                const costoIndex = Math.floor((data.column.index - 1) / 2);
+                if (seleccionadas[costoIndex]?.index === aseguradoraActualPDF.indice) {
+                    data.cell.styles.lineColor = [234, 88, 12];
+                    data.cell.styles.lineWidth = 0.45;
+                }
+            }
         },
         didDrawCell: function (data) {
             if (data.section === "head" && data.row.index === 0 && data.column.index > 0) {
                 const aseguradora = seleccionadas[Math.floor((data.column.index - 1) / 2)];
-                if (aseguradora) dibujarImagenAjustada(doc, logosAseguradoras[aseguradora.nombre], data.cell.x + 2, data.cell.y + 1, data.cell.width - 4, data.cell.height - 2);
+                if (aseguradora) {
+                    dibujarImagenAjustada(doc, logosAseguradoras[aseguradora.nombre], data.cell.x + 2, data.cell.y + 1, data.cell.width - 4, data.cell.height - 2);
+                    if (aseguradoraActualPDF?.indice === aseguradora.index) {
+                        doc.setFillColor(234, 88, 12);
+                        doc.roundedRect(data.cell.x + data.cell.width - 18, data.cell.y + 1, 16, 4.2, 1.5, 1.5, "F");
+                        doc.setTextColor(255, 255, 255);
+                        doc.setFont(undefined, "bold");
+                        doc.setFontSize(5.4);
+                        doc.text("ACTUAL", data.cell.x + data.cell.width - 10, data.cell.y + 3.9, { align: "center" });
+                    }
+                }
             }
         }
     });
