@@ -1236,7 +1236,7 @@ async function generarPDF() {
                 const costoIndex = Math.floor((data.column.index - 1) / 2);
                 if (seleccionadas[costoIndex]?.index === aseguradoraActualPDF.indice) {
                     data.cell.styles.lineColor = [234, 88, 12];
-                    data.cell.styles.lineWidth = 0.45;
+                    data.cell.styles.lineWidth = 0.5;
                 }
             }
         },
