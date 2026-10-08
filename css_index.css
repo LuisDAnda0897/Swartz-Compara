@@ -536,6 +536,63 @@ main{
     background: #dcecfb;
 }
 
+.unit__ChoicePanel {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-self: start;
+}
+
+.unit__Data {
+    position: relative;
+    gap: 6px 24px;
+}
+
+.unit__ChoiceBlock {
+    gap: 5px;
+}
+
+.unit__ChoicePanel .fleet__Button {
+    position: absolute;
+    left: auto;
+    right: 22px;
+    bottom: 12px;
+    width: 162px;
+    min-height: 42px;
+    margin: 0;
+    padding: 8px 12px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background: #dcecfb;
+    border-color: #7fb0df;
+    color: #104f82;
+    box-shadow: 0 2px 5px rgba(21, 85, 140, .12);
+}
+
+.unit__ChoicePanel .fleet__Button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 760px) {
+    .unit__Data {
+        gap: 8px;
+    }
+
+    .unit__ChoicePanel .fleet__Button {
+        position: static;
+        width: 100%;
+        margin-top: 8px;
+    }
+}
+
+@media (min-width: 761px) and (max-width: 1400px) {
+    .unit__ChoicePanel .fleet__Button {
+        right: 16px;
+    }
+}
+
 .coverage__Input[readonly],
 .coverage__Cell input[readonly] {
     background-color: #f8fafc;
