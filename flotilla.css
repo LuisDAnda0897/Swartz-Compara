@@ -103,6 +103,21 @@
 .fleetSumControl select,
 .fleetSumControl input { width: 100%; box-sizing: border-box; min-width: 0; font-size: 12px; padding: 5px 6px; }
 .fleetSumControl { display: grid; gap: 5px; }
+.fleetSumControl small { min-height: 14px; color: #64748b; font-size: 10px; }
+.fleetVehicleSumRow td:first-child { background: #f0f6fc; color: #15558c; }
+.fleetVehicleSumRow td:first-child small { color: #64748b; font-weight: 400; }
+.fleetVehicleSumRow input:not(:disabled) { background: #fffaf0; border-color: #e4c27a; color: #7c4a11; font-weight: 700; }
+.fleetVehicleSumRow input:disabled { background: #f8fafc; color: #94a3b8; }
+.fleetVehicleValuesWrap { margin-top: 18px; }
+.fleetValuesHeader { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin: 0 0 8px; }
+.fleetValuesHeader h3 { margin: 0; color: #15558c; font-size: 15px; }
+.fleetValuesHeader p { margin: 0; color: #64748b; font-size: 12px; text-align: right; }
+.fleetVehicleValuesTable { min-width: 0; }
+.fleetVehicleValuesTable--wide { min-width: 900px; }
+.fleetVehicleValuesTable th:first-child { width: 23%; text-align: left; }
+.fleetVehicleValuesTable td:first-child { background: #f0f6fc; color: #15558c; font-weight: 700; }
+.fleetVehicleValuesTable td:first-child small { color: #64748b; font-weight: 400; }
+.fleetVehicleValuesTable td:not(:first-child) input { background: #fffaf0; border-color: #e4c27a; color: #7c4a11; font-weight: 700; }
 .fleetCoverage__Spacer { text-align: center; color: #94a3b8; background: #f8fafc; }
 .fleetAdditional__Name { display: grid; grid-template-columns: minmax(120px, 1fr) 28px; gap: 6px; }
 .fleetAdditional__Name input { width: 100%; box-sizing: border-box; }
