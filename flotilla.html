@@ -51,6 +51,7 @@
                     <input id="fleetClientCP" data-numeric="integer" inputmode="numeric" maxlength="5" placeholder="45130">
                     <label for="fleetPlan">Plan</label>
                     <select id="fleetPlan">
+                        <option value="" selected>Seleccione un plan</option>
                         <option value="Particular">Particular</option>
                         <option value="Uber">Uber</option>
                         <option value="Multiplataforma">Multiplataforma</option>
@@ -58,6 +59,7 @@
                     </select>
                     <label for="fleetCoverage">Cobertura</label>
                     <select id="fleetCoverage">
+                        <option value="" selected>Seleccione una cobertura</option>
                         <option value="Amplia">Amplia</option>
                         <option value="Limitada">Limitada</option>
                         <option value="Responsabilidad Civil">Responsabilidad Civil</option>
@@ -78,7 +80,10 @@
                     <h2>Vehículos y costos anuales</h2>
                     <p>Una fila por vehículo. Los costos son libres para capturar la cotización recibida.</p>
                 </div>
-                <button id="addFleetVehicle" class="fleetAction fleetAction--primary" type="button">+ Agregar auto</button>
+                <div class="fleetVehicleActions">
+                    <span id="fleetVehicleCount" class="fleetVehicleCount">0 autos</span>
+                    <button id="addFleetVehicle" class="fleetAction fleetAction--primary" type="button">+ Agregar auto</button>
+                </div>
             </div>
             <div class="fleetTable__Wrap">
                 <table class="fleetTable" id="fleetVehiclesTable">
@@ -113,6 +118,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
-    <script src="flotilla.js?v=20261008-4"></script>
+    <script src="flotilla.js?v=20261008-11"></script>
 </body>
 </html>

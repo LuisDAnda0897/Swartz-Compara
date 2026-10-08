@@ -14,10 +14,63 @@ const coverageRows = [
     "Responsabilidad Civil Ocupantes",
     "Gastos Médicos Ocupantes",
     "Asistencia Vial",
-    "Asistencia Legal"
+    "Asistencia Legal",
+    "Accidentes al Conductor"
 ];
 
 const fleetCoverageRows = Array.from(new Set([...coverageRows, "Gastos Médicos Ocupantes"]));
+
+const fleetSumOptions = {
+    AXA: ["Valor Factura", "Valor Convenido", "Valor Comercial", "Valor Comercial 110%"],
+    GNP: ["Valor Factura", "Valor Convenido", "Valor Convenido +10%", "Valor Comercial"],
+    Qualitas: ["Valor Factura", "Valor Convenido", "Valor Comercial"],
+    Banorte: ["Valor Factura", "Valor Convenido", "Valor Comercial"],
+    SPT: ["Valor Factura", "Valor Convenido", "Valor Comercial"],
+    Latino: ["Valor Factura", "Valor Convenido", "Valor Comercial"]
+};
+
+const fleetDeductibleData = {
+    Particular: {
+        "Daños Materiales": ["5%", "5%", "5%", "5%", "5%", "5%"],
+        "Robo Total": ["10%", "10%", "10%", "10%", "10%", "10%"],
+        "Responsabilidad Civil": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"],
+        "Responsabilidad Civil Ocupantes": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"],
+        "Gastos Médicos Ocupantes": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"],
+        "Asistencia Vial": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"],
+        "Asistencia Legal": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"],
+        "Accidentes al Conductor": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"]
+    },
+    Uber: {
+        "Daños Materiales": ["5%", "10%", "10%", "10%", "10%", "10%"],
+        "Robo Total": ["10%", "20%", "20%", "20%", "20%", "20%"],
+        "Responsabilidad Civil": ["N/A", "50 UMAs", "50 UMAs", "50 UMAs", "N/A", "20 UMAs"],
+        "Responsabilidad Civil Ocupantes": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"],
+        "Gastos Médicos Ocupantes": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"],
+        "Asistencia Vial": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"],
+        "Asistencia Legal": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"],
+        "Accidentes al Conductor": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"]
+    },
+    Multiplataforma: {
+        "Daños Materiales": ["10%", "10%", "10%", "10%", "10%", "10%"],
+        "Robo Total": ["20%", "20%", "20%", "20%", "20%", "20%"],
+        "Responsabilidad Civil": ["50 UMAs", "50 UMAs", "50 UMAs", "50 UMAs", "N/A", "20 UMAs"],
+        "Responsabilidad Civil Ocupantes": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"],
+        "Gastos Médicos Ocupantes": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"],
+        "Asistencia Vial": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"],
+        "Asistencia Legal": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"],
+        "Accidentes al Conductor": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"]
+    },
+    "Moto App": {
+        "Daños Materiales": ["10%", "10%", "10%", "10%", "10%", "10%"],
+        "Robo Total": ["20%", "20%", "20%", "20%", "20%", "20%"],
+        "Responsabilidad Civil": ["N/A", "Sin Deducible", "N/A", "25 UMAs", "Pendiente", "Pendiente"],
+        "Responsabilidad Civil Ocupantes": ["", "", "", "", "", ""],
+        "Gastos Médicos Ocupantes": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"],
+        "Asistencia Vial": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"],
+        "Asistencia Legal": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"],
+        "Accidentes al Conductor": ["Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible", "Sin deducible"]
+    }
+};
 
 const fleetPlanData = {
     Particular: {
@@ -27,7 +80,8 @@ const fleetPlanData = {
         "Responsabilidad Civil Ocupantes": ["Incluido", "Incluido", "Incluido", "Incluido", "Incluido", "Incluido"],
         "Gastos Médicos Ocupantes": ["$200,000", "$200,000", "$200,000", "$200,000", "$200,000", "$200,000"],
         "Asistencia Vial": ["5 Eventos", "5 Eventos", "5 Eventos", "5 Eventos", "1 Evento", "5 Eventos"],
-        "Asistencia Legal": ["Incluida", "Incluida", "Incluida", "Incluida", "Incluida", "Incluida"]
+        "Asistencia Legal": ["Incluida", "Incluida", "Incluida", "Incluida", "Incluida", "Incluida"],
+        "Accidentes al Conductor": ["N/A", "N/A", "N/A", "N/A", "N/A", "N/A"]
     },
     Uber: {
         "Daños Materiales": ["10%", "10%", "10%", "10%", "10%", "10%"],
@@ -36,7 +90,8 @@ const fleetPlanData = {
         "Responsabilidad Civil Ocupantes": ["$1,500,000", "$3,000,000", "5,000 UMAs", "5,000 UMAs", "5,000 UMAs", "5,000 UMAs"],
         "Gastos Médicos Ocupantes": ["$200,000", "$200,000", "$200,000", "$200,000", "$200,000", "$200,000"],
         "Asistencia Vial": ["5 Eventos", "5 Eventos", "2 Eventos", "2 Eventos", "1 Evento", "2 Eventos"],
-        "Asistencia Legal": ["Incluida", "Incluida", "Incluida", "Incluida", "Incluida", "Incluida"]
+        "Asistencia Legal": ["Incluida", "Incluida", "Incluida", "Incluida", "Incluida", "Incluida"],
+        "Accidentes al Conductor": ["N/A", "N/A", "N/A", "N/A", "N/A", "N/A"]
     },
     Multiplataforma: {
         "Daños Materiales": ["10%", "10%", "10%", "10%", "10%", "10%"],
@@ -54,13 +109,16 @@ const fleetPlanData = {
         "Responsabilidad Civil Ocupantes": ["", "", "", "", "", ""],
         "Gastos Médicos Ocupantes": ["$50,000", "$50,000", "$50,000", "$25,000", "Pendiente", "Pendiente"],
         "Asistencia Vial": ["2 Eventos", "5 Eventos", "2 Eventos", "2 Eventos", "Pendiente", "Pendiente"],
-        "Asistencia Legal": ["Incluida", "Incluida", "Incluida", "Incluida", "Pendiente", "Pendiente"]
+        "Asistencia Legal": ["Incluida", "Incluida", "Incluida", "Incluida", "Pendiente", "Pendiente"],
+        "Accidentes al Conductor": ["N/A", "N/A", "N/A", "N/A", "N/A", "N/A"]
     }
 };
 
 let fleetVehicles = [];
 let fleetCoverage = {};
 let fleetAdditionalCoverages = [];
+let fleetSumTypes = {};
+let fleetSumAmounts = {};
 
 const money = (value) => {
     const number = Number(String(value || "").replace(/[^0-9.]/g, ""));
@@ -75,6 +133,54 @@ const escapeHtml = (value) => String(value || "")
     .replace(/'/g, "&#039;");
 
 const selectedFleetInsurers = () => fleetInsurers.filter((_, index) => document.querySelector(`.fleetInsurer__Check[data-index="${index}"]`)?.checked);
+
+function getFleetCoverageValue(coverage, insurerName) {
+    const key = `${coverage}|${insurerName}|suma`;
+    if (Object.prototype.hasOwnProperty.call(fleetCoverage, key)) return fleetCoverage[key];
+
+    const plan = document.getElementById("fleetPlan").value;
+    const planData = fleetPlanData[plan] || {};
+    const insurerIndex = fleetInsurers.findIndex((insurer) => insurer.name === insurerName);
+    return planData[coverage]?.[insurerIndex] || "";
+}
+
+function getFleetDeductibleValue(coverage, insurerName) {
+    const key = `${coverage}|${insurerName}|deducible`;
+    if (Object.prototype.hasOwnProperty.call(fleetCoverage, key)) return fleetCoverage[key];
+
+    const plan = document.getElementById("fleetPlan").value;
+    const planData = fleetDeductibleData[plan] || {};
+    const insurerIndex = fleetInsurers.findIndex((insurer) => insurer.name === insurerName);
+    return planData[coverage]?.[insurerIndex] || "Sin deducible";
+}
+
+function getFleetVisibleCoverageRows() {
+    const plan = document.getElementById("fleetPlan").value;
+    return fleetCoverageRows.filter((coverage) => coverage !== "Responsabilidad Civil Ocupantes" || !["Particular", "Moto App"].includes(plan));
+}
+
+function getFleetSumDisplay(coverage, insurerName) {
+    if (!["Daños Materiales", "Robo Total"].includes(coverage)) return getFleetCoverageValue(coverage, insurerName);
+
+    const type = fleetSumTypes[insurerName] || "";
+    if (!type) return "";
+    if (["Valor Factura", "Valor Convenido", "Valor Convenido +10%", "Valor Comercial 110%"].includes(type)) {
+        const amount = fleetSumAmounts[insurerName] || "";
+        return amount ? `${type}: ${money(amount)}` : type;
+    }
+    return type;
+}
+
+function getFleetSumTypeDisplay(insurerName) {
+    const type = fleetSumTypes[insurerName] || "";
+    if (!type) return "-";
+    const amount = fleetSumAmounts[insurerName] || "";
+    return isCustomFleetSum(type) && amount ? `${type}\n${money(amount)}` : type;
+}
+
+function isCustomFleetSum(type) {
+    return ["Valor Factura", "Valor Convenido", "Valor Convenido +10%", "Valor Comercial 110%"].includes(type);
+}
 
 function renderInsurers() {
     const container = document.getElementById("fleetInsurers");
@@ -92,6 +198,8 @@ function renderVehicleTable() {
     const selected = selectedFleetInsurers();
     const table = document.getElementById("fleetVehiclesTable");
     const empty = document.getElementById("fleetVehiclesEmpty");
+    const count = fleetVehicles.length;
+    document.getElementById("fleetVehicleCount").textContent = `${count} ${count === 1 ? "auto" : "autos"}`;
 
     table.querySelector("thead").innerHTML = `<tr><th>Vehículo</th>${selected.map((insurer) => `<th>${insurer.name}<br><small>Costo anual</small></th>`).join("")}</tr>`;
     table.querySelector("tbody").innerHTML = fleetVehicles.map((vehicle, rowIndex) => `
@@ -135,14 +243,30 @@ function renderVehicleTable() {
 
 function renderCoverageTable() {
     const selected = selectedFleetInsurers();
-    const plan = document.getElementById("fleetPlan").value;
-    const planData = fleetPlanData[plan] || {};
     const table = document.getElementById("fleetCoverageTable");
-    table.querySelector("thead").innerHTML = `<tr><th>Cobertura</th>${selected.map((insurer) => `<th>${insurer.name}</th>`).join("")}</tr>`;
-    const standardRows = fleetCoverageRows.map((coverage) => `
+    table.classList.toggle("fleetCoverageTable--wide", selected.length > 3);
+    table.querySelector("thead").innerHTML = `
+        <tr><th>Cobertura</th>${selected.map((insurer) => `<th colspan="2">${insurer.name}</th>`).join("")}</tr>
+        <tr><th></th>${selected.map(() => "<th>Suma asegurada</th><th>Deducible</th>").join("")}</tr>
+    `;
+    const sumRow = `<tr>
+        <td>Tipo de suma asegurada</td>
+        ${selected.map((insurer) => {
+            const type = fleetSumTypes[insurer.name] || "";
+            const options = (fleetSumOptions[insurer.name] || []).map((option) => `<option value="${option}" ${option === type ? "selected" : ""}>${option}</option>`).join("");
+            const amount = fleetSumAmounts[insurer.name] || "";
+            return `<td><div class="fleetSumControl"><select data-sum-type="${insurer.name}"><option value="">Seleccione</option>${options}</select><input data-sum-amount="${insurer.name}" data-numeric="decimal" inputmode="decimal" placeholder="Valor" value="${escapeHtml(amount)}" ${isCustomFleetSum(type) ? "" : "hidden"}></div></td><td class="fleetCoverage__Spacer">-</td>`;
+        }).join("")}
+    </tr>`;
+    const standardRows = getFleetVisibleCoverageRows().map((coverage) => `
         <tr>
             <td>${coverage}</td>
-            ${selected.map((insurer) => `<td><input data-coverage="${coverage}" data-insurer="${insurer.name}" placeholder="Incluida / monto"></td>`).join("")}
+            ${selected.map((insurer) => {
+                const suma = getFleetSumDisplay(coverage, insurer.name);
+                const deducible = getFleetDeductibleValue(coverage, insurer.name);
+                const sumaBloqueada = ["Daños Materiales", "Robo Total"].includes(coverage) ? "readonly" : "";
+                return `<td><input data-coverage-suma="${coverage}" data-insurer="${insurer.name}" placeholder="Suma asegurada" value="${escapeHtml(suma)}" ${sumaBloqueada}></td><td><input data-coverage-deducible="${coverage}" data-insurer="${insurer.name}" placeholder="Deducible" value="${escapeHtml(deducible)}"></td>`;
+            }).join("")}
         </tr>
     `).join("");
     const additionalRows = fleetAdditionalCoverages.map((coverage) => `
@@ -151,14 +275,23 @@ function renderCoverageTable() {
             ${selected.map((insurer) => `<td><input data-additional-value="${coverage.id}" data-insurer="${insurer.name}" placeholder="Valor / detalle" value="${escapeHtml(coverage.values[insurer.name])}"></td>`).join("")}
         </tr>
     `).join("");
-    table.querySelector("tbody").innerHTML = standardRows + additionalRows;
+    table.querySelector("tbody").innerHTML = sumRow + standardRows + additionalRows;
 
-    table.querySelectorAll("[data-coverage]").forEach((input) => {
-        const key = `${input.dataset.coverage}|${input.dataset.insurer}`;
-        const insurerIndex = fleetInsurers.findIndex((insurer) => insurer.name === input.dataset.insurer);
-        input.value = fleetCoverage[key] || planData[input.dataset.coverage]?.[insurerIndex] || "";
-        input.addEventListener("input", () => { fleetCoverage[key] = input.value; });
-    });
+    table.querySelectorAll("[data-sum-type]").forEach((input) => input.addEventListener("change", () => {
+        fleetSumTypes[input.dataset.sumType] = input.value;
+        if (!isCustomFleetSum(input.value)) delete fleetSumAmounts[input.dataset.sumType];
+        renderCoverageTable();
+    }));
+    table.querySelectorAll("[data-sum-amount]").forEach((input) => input.addEventListener("input", () => {
+        restrictNumericInput(input);
+        fleetSumAmounts[input.dataset.sumAmount] = input.value;
+    }));
+    table.querySelectorAll("[data-coverage-suma]").forEach((input) => input.addEventListener("input", () => {
+        fleetCoverage[`${input.dataset.coverageSuma}|${input.dataset.insurer}|suma`] = input.value;
+    }));
+    table.querySelectorAll("[data-coverage-deducible]").forEach((input) => input.addEventListener("input", () => {
+        fleetCoverage[`${input.dataset.coverageDeducible}|${input.dataset.insurer}|deducible`] = input.value;
+    }));
     table.querySelectorAll("[data-additional-name]").forEach((input) => input.addEventListener("input", () => {
         const coverage = fleetAdditionalCoverages.find((item) => item.id === input.dataset.additionalName);
         if (coverage) coverage.name = input.value;
@@ -222,6 +355,8 @@ function validateFleet() {
     if (!document.getElementById("fleetClientName").value.trim()) missing.push("Nombre o empresa");
     if (!document.getElementById("fleetClientBdy").value) missing.push("fecha de nacimiento");
     if (!document.getElementById("fleetAgent").value) missing.push("Agente");
+    if (!document.getElementById("fleetPlan").value) missing.push("plan");
+    if (!document.getElementById("fleetCoverage").value) missing.push("cobertura");
     const selected = selectedFleetInsurers();
     if (!selected.length) missing.push("al menos una aseguradora");
     if (!fleetVehicles.length) missing.push("al menos un auto");
@@ -372,35 +507,71 @@ async function generateFleetPDF() {
     });
 
     const coverageStart = (doc.lastAutoTable?.finalY || 60) + 8;
-    const coverageHead = ["Cobertura", ...selected.map(() => "")];
-    const coverageBody = fleetCoverageRows.map((coverage) => [coverage, ...selected.map((insurer) => fleetCoverage[`${coverage}|${insurer.name}`] || "-")]);
+    const coverageHead = [{ content: "Cobertura", styles: { halign: "left" } }, ...selected.map(() => ({ content: "", colSpan: 2 }))];
+    const coverageBody = [[
+        "Tipo de suma asegurada",
+        ...selected.map((insurer) => ({ content: getFleetSumTypeDisplay(insurer.name), colSpan: 2 }))
+    ]];
+    getFleetVisibleCoverageRows().forEach((coverage) => {
+        coverageBody.push([
+            coverage,
+            ...selected.flatMap((insurer) => [
+                getFleetSumDisplay(coverage, insurer.name) || "-",
+                getFleetDeductibleValue(coverage, insurer.name) || "-"
+            ])
+        ]);
+    });
     fleetAdditionalCoverages.forEach((coverage) => {
         const name = coverage.name.trim() || "Cobertura adicional";
-        const values = selected.map((insurer) => coverage.values[insurer.name] || "-");
+        const values = selected.flatMap((insurer) => [coverage.values[insurer.name] || "-", "-"]);
         if (name !== "Cobertura adicional" || values.some((value) => value !== "-")) coverageBody.push([name, ...values]);
+    });
+    const coverageTableWidth = pageWidth - 36;
+    const coverageLabelWidth = selected.length === 1 ? 58 : Math.min(68, coverageTableWidth * 0.27);
+    const coveragePairWidth = (coverageTableWidth - coverageLabelWidth) / selected.length;
+    const coverageColumnStyles = { 0: { cellWidth: coverageLabelWidth, halign: "left", fontStyle: "bold", fillColor: azulClaro } };
+    selected.forEach((_, index) => {
+        coverageColumnStyles[1 + (index * 2)] = { cellWidth: coveragePairWidth * 0.58, halign: "center" };
+        coverageColumnStyles[2 + (index * 2)] = { cellWidth: coveragePairWidth * 0.42, halign: "center" };
     });
     doc.autoTable({
         startY: coverageStart,
         head: [coverageHead],
         body: coverageBody,
         margin: { left: 18, right: 18 },
-        tableWidth: pageWidth - 36,
+        tableWidth: coverageTableWidth,
         theme: "grid",
         headStyles: { fillColor: [255, 255, 255], textColor: grisTexto, lineColor: grisLinea, lineWidth: .25, minCellHeight: 13 },
         styles: { fontSize: 7, cellPadding: 2.2, valign: "middle", halign: "center", lineColor: grisLinea, lineWidth: .2 },
-        columnStyles: { 0: { cellWidth: 68, halign: "left", fontStyle: "bold", fillColor: azulClaro } },
+        columnStyles: coverageColumnStyles,
         didDrawCell: (data) => {
             if (data.section === "head" && data.column.index > 0) {
-                drawPdfImage(doc, logos[selected[data.column.index - 1].name], data.cell.x + 2, data.cell.y + 1, data.cell.width - 4, data.cell.height - 2);
+                const insurer = selected[Math.floor((data.column.index - 1) / 2)];
+                if (insurer) drawPdfImage(doc, logos[insurer.name], data.cell.x + 2, data.cell.y + 1, data.cell.width - 4, data.cell.height - 2);
             }
         }
     });
 
-    const noteY = Math.min((doc.lastAutoTable?.finalY || 190) + 7, pageHeight - 10);
+    const notaVigencia = "Cotizacion con vigencia estimada de 15 dias naturales, excepto Qualitas con vigencia de 7 dias. La vigencia no garantiza precio fijo: el costo puede cambiar sin previo aviso por ajustes, promociones por tiempo limitado, disponibilidad o decision de la aseguradora. Una vez vencida la vigencia, el costo queda sujeto a recotizacion y es mas propenso a cambios.";
+    const notaVigenciaLineas = doc.splitTextToSize(notaVigencia, pageWidth - 28);
+    const alturaNotas = (notaVigenciaLineas.length * 4) + 14;
+    let noteY = (doc.lastAutoTable?.finalY || 190) + 7;
+    if (noteY + alturaNotas > pageHeight - 6) {
+        doc.addPage("letter", "landscape");
+        doc.setFillColor(...grisSuave);
+        doc.rect(0, 0, pageWidth, pageHeight, "F");
+        doc.setFillColor(255, 255, 255);
+        doc.roundedRect(10, 6, pageWidth - 20, pageHeight - 13, 3, 3, "F");
+        doc.setFont(undefined, "bold");
+        doc.setFontSize(12);
+        doc.setTextColor(...azul);
+        doc.text("Notas de la cotización", 18, 20);
+        noteY = 31;
+    }
     doc.setFontSize(7);
     doc.setTextColor(...grisMuted);
-    doc.text("Los costos y coberturas fueron capturados para fines comparativos y están sujetos a validación de la aseguradora.", 14, noteY);
-    doc.text("Documento generado por Swartz Seguros y Contabilidad", 14, Math.min(noteY + 6, pageHeight - 4));
+    doc.text(notaVigenciaLineas, 14, noteY);
+    doc.text("Documento generado por Swartz Seguros y Contabilidad", 14, noteY + (notaVigenciaLineas.length * 4) + 4);
 
     const filename = document.getElementById("fleetClientName").value.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "") || "cliente";
     doc.save(`cotizacion-flotilla-${filename}.pdf`);
@@ -410,10 +581,14 @@ function clearFleet() {
     fleetVehicles = [];
     fleetCoverage = {};
     fleetAdditionalCoverages = [];
+    fleetSumTypes = {};
+    fleetSumAmounts = {};
     document.getElementById("fleetClientName").value = "";
     document.getElementById("fleetClientBdy").value = "";
     document.getElementById("fleetClientCP").value = "";
     document.getElementById("fleetAgent").value = "";
+    document.getElementById("fleetPlan").value = "";
+    document.getElementById("fleetCoverage").value = "";
     document.querySelectorAll(".fleetInsurer__Check").forEach((check) => { check.checked = false; });
     renderAllTables();
 }
@@ -425,6 +600,8 @@ document.getElementById("fleetClientName").addEventListener("input", (event) => 
 document.getElementById("fleetClientCP").addEventListener("input", (event) => restrictNumericInput(event.currentTarget));
 document.getElementById("fleetPlan").addEventListener("change", () => {
     fleetCoverage = {};
+    fleetSumTypes = {};
+    fleetSumAmounts = {};
     renderCoverageTable();
 });
 document.getElementById("addFleetVehicle").addEventListener("click", addFleetVehicle);

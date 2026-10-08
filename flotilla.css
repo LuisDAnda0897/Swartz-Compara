@@ -72,6 +72,8 @@
 
 .fleetSection { margin-bottom: 22px; }
 .fleetSection__Header { display: flex; justify-content: space-between; align-items: center; gap: 18px; margin-bottom: 16px; }
+.fleetVehicleActions { display: flex; align-items: center; gap: 10px; }
+.fleetVehicleCount { min-width: 68px; padding: 8px 10px; border-radius: 6px; background: #f5f7fa; border: 1px solid #d9e2ec; color: #526273; font-size: 12px; font-weight: 700; text-align: center; }
 .fleetSection__Header h2 { font-size: 19px; }
 .fleetAction { border: 0; border-radius: 6px; padding: 11px 16px; font-weight: 700; cursor: pointer; white-space: nowrap; }
 .fleetAction--primary { background: #3186f5; color: #fff; }
@@ -89,9 +91,19 @@
 .fleetTable input { width: 100%; box-sizing: border-box; min-width: 0; }
 .fleetVehicleFields { display: grid; grid-template-columns: 84px minmax(120px, 1fr) 28px; gap: 6px; }
 .fleetVehicleFields input { height: 31px; padding: 5px 7px; font-size: 12px; }
+.fleetVehiclesTable td:not(:first-child) input { background: #f7fbff; border-color: #c5daf0; color: #15558c; font-weight: 700; }
 .fleetRemove { width: 28px; height: 31px; border: 1px solid #f1a6a6; border-radius: 5px; background: #fff1f2; color: #b42318; cursor: pointer; font-weight: 800; }
-.fleetCoverageTable th:first-child { width: 250px; }
+.fleetCoverageTable th:first-child { width: 23%; }
 .fleetCoverageTable td:first-child { font-weight: 700; color: #334155; }
+.fleetCoverageTable { min-width: 0; }
+.fleetCoverageTable--wide { min-width: 1120px; }
+.fleetCoverageTable th[colspan="2"] { background: #eaf2fb; color: #15558c; }
+.fleetCoverageTable th:not(:first-child) { font-size: 11px; }
+.fleetCoverageTable td input,
+.fleetSumControl select,
+.fleetSumControl input { width: 100%; box-sizing: border-box; min-width: 0; font-size: 12px; padding: 5px 6px; }
+.fleetSumControl { display: grid; gap: 5px; }
+.fleetCoverage__Spacer { text-align: center; color: #94a3b8; background: #f8fafc; }
 .fleetAdditional__Name { display: grid; grid-template-columns: minmax(120px, 1fr) 28px; gap: 6px; }
 .fleetAdditional__Name input { width: 100%; box-sizing: border-box; }
 .fleetAdditional__Delete { width: 28px; height: 31px; border: 1px solid #f1a6a6; border-radius: 5px; background: #fff1f2; color: #b42318; cursor: pointer; font-weight: 800; }
