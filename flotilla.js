@@ -1,0 +1,412 @@
+const fleetInsurers = [
+    { name: "AXA", logo: "LOGO/AXA_Logo.svg.png" },
+    { name: "GNP", logo: "LOGO/gnp-seguros.png" },
+    { name: "Qualitas", logo: "LOGO/qualitas_logo.png" },
+    { name: "Banorte", logo: "LOGO/banorte.png" },
+    { name: "SPT", logo: "LOGO/images.png" },
+    { name: "Latino", logo: "LOGO/latino seguros.png" }
+];
+
+const coverageRows = [
+    "Daños Materiales",
+    "Robo Total",
+    "Responsabilidad Civil",
+    "Responsabilidad Civil Ocupantes",
+    "Gastos Médicos Ocupantes",
+    "Asistencia Vial",
+    "Asistencia Legal"
+];
+
+const fleetCoverageRows = Array.from(new Set([...coverageRows, "Gastos Médicos Ocupantes"]));
+
+const fleetPlanData = {
+    Particular: {
+        "Daños Materiales": ["5%", "5%", "5%", "5%", "5%", "5%"],
+        "Robo Total": ["10%", "10%", "10%", "10%", "10%", "10%"],
+        "Responsabilidad Civil": ["$4,000,000", "$3,000,000", "$3,000,000", "$4,000,000", "$3,000,000", "$3,000,000"],
+        "Responsabilidad Civil Ocupantes": ["Incluido", "Incluido", "Incluido", "Incluido", "Incluido", "Incluido"],
+        "Gastos Médicos Ocupantes": ["$200,000", "$200,000", "$200,000", "$200,000", "$200,000", "$200,000"],
+        "Asistencia Vial": ["5 Eventos", "5 Eventos", "5 Eventos", "5 Eventos", "1 Evento", "5 Eventos"],
+        "Asistencia Legal": ["Incluida", "Incluida", "Incluida", "Incluida", "Incluida", "Incluida"]
+    },
+    Uber: {
+        "Daños Materiales": ["10%", "10%", "10%", "10%", "10%", "10%"],
+        "Robo Total": ["20%", "20%", "20%", "20%", "20%", "20%"],
+        "Responsabilidad Civil": ["$4,000,000", "$3,000,000", "$3,000,000", "$4,000,000", "$3,000,000", "$3,000,000"],
+        "Responsabilidad Civil Ocupantes": ["$1,500,000", "$3,000,000", "5,000 UMAs", "5,000 UMAs", "5,000 UMAs", "5,000 UMAs"],
+        "Gastos Médicos Ocupantes": ["$200,000", "$200,000", "$200,000", "$200,000", "$200,000", "$200,000"],
+        "Asistencia Vial": ["5 Eventos", "5 Eventos", "2 Eventos", "2 Eventos", "1 Evento", "2 Eventos"],
+        "Asistencia Legal": ["Incluida", "Incluida", "Incluida", "Incluida", "Incluida", "Incluida"]
+    },
+    Multiplataforma: {
+        "Daños Materiales": ["10%", "10%", "10%", "10%", "10%", "10%"],
+        "Robo Total": ["20%", "20%", "20%", "20%", "20%", "20%"],
+        "Responsabilidad Civil": ["$4,000,000", "$3,000,000", "$3,000,000", "$4,000,000", "$3,000,000", "$3,000,000"],
+        "Responsabilidad Civil Ocupantes": ["5,000 UMAs", "$3,000,000", "5,000 UMAs", "5,000 UMAs", "5,000 UMAs", "5,000 UMAs"],
+        "Gastos Médicos Ocupantes": ["$200,000", "$200,000", "$200,000", "$200,000", "$200,000", "$200,000"],
+        "Asistencia Vial": ["2 Eventos", "5 Eventos", "2 Eventos", "2 Eventos", "1 Evento", "2 Eventos"],
+        "Asistencia Legal": ["Incluida", "Incluida", "Incluida", "Incluida", "Incluida", "Incluida"]
+    },
+    "Moto App": {
+        "Daños Materiales": ["10%", "10%", "10%", "10%", "10%", "10%"],
+        "Robo Total": ["20%", "20%", "20%", "20%", "20%", "20%"],
+        "Responsabilidad Civil": ["$3,000,000", "$3,000,000", "$3,000,000", "$4,000,000", "Pendiente", "Pendiente"],
+        "Responsabilidad Civil Ocupantes": ["", "", "", "", "", ""],
+        "Gastos Médicos Ocupantes": ["$50,000", "$50,000", "$50,000", "$25,000", "Pendiente", "Pendiente"],
+        "Asistencia Vial": ["2 Eventos", "5 Eventos", "2 Eventos", "2 Eventos", "Pendiente", "Pendiente"],
+        "Asistencia Legal": ["Incluida", "Incluida", "Incluida", "Incluida", "Pendiente", "Pendiente"]
+    }
+};
+
+let fleetVehicles = [];
+let fleetCoverage = {};
+let fleetAdditionalCoverages = [];
+
+const money = (value) => {
+    const number = Number(String(value || "").replace(/[^0-9.]/g, ""));
+    return number ? number.toLocaleString("es-MX", { style: "currency", currency: "MXN", minimumFractionDigits: 2 }) : (value || "-");
+};
+
+const escapeHtml = (value) => String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+const selectedFleetInsurers = () => fleetInsurers.filter((_, index) => document.querySelector(`.fleetInsurer__Check[data-index="${index}"]`)?.checked);
+
+function renderInsurers() {
+    const container = document.getElementById("fleetInsurers");
+    container.innerHTML = fleetInsurers.map((insurer, index) => `
+        <label class="fleetInsurer">
+            <input type="checkbox" class="fleetInsurer__Check" data-index="${index}">
+            <img src="${insurer.logo}" alt="${insurer.name}">
+            <span>${insurer.name}</span>
+        </label>
+    `).join("");
+    container.querySelectorAll("input").forEach((input) => input.addEventListener("change", renderAllTables));
+}
+
+function renderVehicleTable() {
+    const selected = selectedFleetInsurers();
+    const table = document.getElementById("fleetVehiclesTable");
+    const empty = document.getElementById("fleetVehiclesEmpty");
+
+    table.querySelector("thead").innerHTML = `<tr><th>Vehículo</th>${selected.map((insurer) => `<th>${insurer.name}<br><small>Costo anual</small></th>`).join("")}</tr>`;
+    table.querySelector("tbody").innerHTML = fleetVehicles.map((vehicle, rowIndex) => `
+        <tr>
+            <td>
+                <div class="fleetVehicleFields">
+                    <input data-field="year" data-numeric="integer" data-row="${rowIndex}" inputmode="numeric" maxlength="4" placeholder="Modelo" value="${escapeHtml(vehicle.year)}">
+                    <input data-field="description" data-row="${rowIndex}" placeholder="Descripción del vehículo" value="${escapeHtml(vehicle.description)}">
+                    <button class="fleetRemove" data-remove="${rowIndex}" type="button" title="Eliminar auto">×</button>
+                </div>
+            </td>
+            ${selected.map((insurer) => `<td><input data-cost="${insurer.name}" data-numeric="decimal" data-row="${rowIndex}" inputmode="decimal" placeholder="$0.00" value="${escapeHtml(vehicle.costs[insurer.name])}"></td>`).join("")}
+        </tr>
+    `).join("");
+
+    empty.hidden = fleetVehicles.length > 0;
+    table.hidden = fleetVehicles.length === 0 || selected.length === 0;
+    if (selected.length === 0) empty.textContent = "Selecciona al menos una aseguradora para comenzar.";
+    else empty.textContent = fleetVehicles.length ? "" : "Agrega el primer auto para comenzar la cotización.";
+
+    table.querySelectorAll("[data-field]").forEach((input) => input.addEventListener("input", () => {
+        fleetVehicles[Number(input.dataset.row)][input.dataset.field] = input.value;
+    }));
+    table.querySelectorAll("[data-cost]").forEach((input) => input.addEventListener("input", () => {
+        fleetVehicles[Number(input.dataset.row)].costs[input.dataset.cost] = input.value;
+    }));
+    table.querySelectorAll("[data-numeric]").forEach((input) => input.addEventListener("input", () => {
+        restrictNumericInput(input);
+        if (input.dataset.field) fleetVehicles[Number(input.dataset.row)][input.dataset.field] = input.value;
+        if (input.dataset.cost) fleetVehicles[Number(input.dataset.row)].costs[input.dataset.cost] = input.value;
+    }));
+    table.querySelectorAll("[data-remove]").forEach((button) => button.addEventListener("click", () => {
+        fleetVehicles.splice(Number(button.dataset.remove), 1);
+        renderVehicleTable();
+    }));
+}
+
+function renderCoverageTable() {
+    const selected = selectedFleetInsurers();
+    const plan = document.getElementById("fleetPlan").value;
+    const planData = fleetPlanData[plan] || {};
+    const table = document.getElementById("fleetCoverageTable");
+    table.querySelector("thead").innerHTML = `<tr><th>Cobertura</th>${selected.map((insurer) => `<th>${insurer.name}</th>`).join("")}</tr>`;
+    const standardRows = fleetCoverageRows.map((coverage) => `
+        <tr>
+            <td>${coverage}</td>
+            ${selected.map((insurer) => `<td><input data-coverage="${coverage}" data-insurer="${insurer.name}" placeholder="Incluida / monto"></td>`).join("")}
+        </tr>
+    `).join("");
+    const additionalRows = fleetAdditionalCoverages.map((coverage) => `
+        <tr>
+            <td><div class="fleetAdditional__Name"><input data-additional-name="${coverage.id}" placeholder="Nombre de cobertura" value="${escapeHtml(coverage.name)}"><button type="button" class="fleetAdditional__Delete" data-delete-additional="${coverage.id}" title="Eliminar cobertura">×</button></div></td>
+            ${selected.map((insurer) => `<td><input data-additional-value="${coverage.id}" data-insurer="${insurer.name}" placeholder="Valor / detalle" value="${escapeHtml(coverage.values[insurer.name])}"></td>`).join("")}
+        </tr>
+    `).join("");
+    table.querySelector("tbody").innerHTML = standardRows + additionalRows;
+
+    table.querySelectorAll("[data-coverage]").forEach((input) => {
+        const key = `${input.dataset.coverage}|${input.dataset.insurer}`;
+        const insurerIndex = fleetInsurers.findIndex((insurer) => insurer.name === input.dataset.insurer);
+        input.value = fleetCoverage[key] || planData[input.dataset.coverage]?.[insurerIndex] || "";
+        input.addEventListener("input", () => { fleetCoverage[key] = input.value; });
+    });
+    table.querySelectorAll("[data-additional-name]").forEach((input) => input.addEventListener("input", () => {
+        const coverage = fleetAdditionalCoverages.find((item) => item.id === input.dataset.additionalName);
+        if (coverage) coverage.name = input.value;
+    }));
+    table.querySelectorAll("[data-additional-value]").forEach((input) => input.addEventListener("input", () => {
+        const coverage = fleetAdditionalCoverages.find((item) => item.id === input.dataset.additionalValue);
+        if (coverage) coverage.values[input.dataset.insurer] = input.value;
+    }));
+    table.querySelectorAll("[data-delete-additional]").forEach((button) => button.addEventListener("click", () => {
+        fleetAdditionalCoverages = fleetAdditionalCoverages.filter((item) => item.id !== button.dataset.deleteAdditional);
+        renderCoverageTable();
+    }));
+}
+
+function renderAllTables() {
+    renderVehicleTable();
+    renderCoverageTable();
+}
+
+function restrictNumericInput(input) {
+    const allowDecimal = input.dataset.numeric === "decimal";
+    const previous = input.value;
+    let value = previous.replace(allowDecimal ? /[^0-9.]/g : /[^0-9]/g, "");
+    if (allowDecimal) {
+        const parts = value.split(".");
+        value = parts.shift() + (parts.length ? `.${parts.join("")}` : "");
+    }
+    input.value = value;
+}
+
+function addFleetCoverage() {
+    fleetAdditionalCoverages.push({ id: `fleet-additional-${Date.now()}`, name: "", values: {} });
+    renderCoverageTable();
+    document.querySelector("[data-additional-name]:last-of-type")?.focus();
+}
+
+function addFleetVehicle() {
+    fleetVehicles.push({ year: "", description: "", costs: {} });
+    renderVehicleTable();
+    const yearInputs = document.querySelectorAll("[data-field='year']");
+    const firstInput = yearInputs[yearInputs.length - 1];
+    firstInput?.focus();
+}
+
+function validateFleet() {
+    const missing = [];
+    if (!document.getElementById("fleetClientName").value.trim()) missing.push("Nombre o empresa");
+    if (!document.getElementById("fleetAgent").value) missing.push("Agente");
+    const selected = selectedFleetInsurers();
+    if (!selected.length) missing.push("al menos una aseguradora");
+    if (!fleetVehicles.length) missing.push("al menos un auto");
+
+    fleetVehicles.forEach((vehicle, index) => {
+        if (!vehicle.year.trim()) missing.push(`modelo del auto ${index + 1}`);
+        if (!vehicle.description.trim()) missing.push(`descripción del auto ${index + 1}`);
+        selected.forEach((insurer) => {
+            if (!String(vehicle.costs[insurer.name] || "").trim()) missing.push(`costo de ${insurer.name} en auto ${index + 1}`);
+        });
+    });
+
+    if (missing.length) {
+        alert(`Completa: ${missing.join(", ")}.`);
+        return false;
+    }
+    return true;
+}
+
+function loadPdfImage(src) {
+    return new Promise((resolve) => {
+        const image = new Image();
+        image.crossOrigin = "anonymous";
+        image.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = image.naturalWidth;
+            canvas.height = image.naturalHeight;
+            canvas.getContext("2d").drawImage(image, 0, 0);
+            resolve({ data: canvas.toDataURL("image/png"), width: image.naturalWidth, height: image.naturalHeight });
+        };
+        image.onerror = () => resolve(null);
+        image.src = src;
+    });
+}
+
+function drawPdfImage(doc, image, x, y, maxWidth, maxHeight) {
+    if (!image) return;
+    const ratio = image.width / image.height;
+    let width = maxWidth;
+    let height = width / ratio;
+    if (height > maxHeight) {
+        height = maxHeight;
+        width = height * ratio;
+    }
+    doc.addImage(image.data, "PNG", x + (maxWidth - width) / 2, y + (maxHeight - height) / 2, width, height);
+}
+
+async function generateFleetPDF() {
+    if (!validateFleet()) return;
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "letter" });
+    const selected = selectedFleetInsurers();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const logos = { Swartz: await loadPdfImage("logo-Photoroom.png") };
+    for (const insurer of selected) logos[insurer.name] = await loadPdfImage(insurer.logo);
+
+    const azul = [27, 85, 145], azulClaro = [239, 246, 255], dorado = [216, 163, 74];
+    const grisTexto = [24, 31, 42], grisSuave = [246, 248, 251], grisLinea = [226, 232, 240], grisMuted = [102, 112, 133];
+    const pageHeight = doc.internal.pageSize.getHeight();
+
+    doc.setFillColor(...grisSuave);
+    doc.rect(0, 0, pageWidth, pageHeight, "F");
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(10, 6, pageWidth - 20, pageHeight - 13, 3, 3, "F");
+    drawPdfImage(doc, logos.Swartz, 14, 9, 38, 15);
+    doc.setFont(undefined, "bold");
+    doc.setTextColor(...grisTexto);
+    doc.setFontSize(17);
+    doc.text("Cotización de flotilla", 62, 14);
+    doc.setFont(undefined, "normal");
+    doc.setTextColor(...grisMuted);
+    doc.setFontSize(8.5);
+    doc.text("Reporte de cotización con costos por vehículo", 62, 20);
+
+    doc.setDrawColor(...grisLinea);
+    doc.setFillColor(255, 255, 255);
+    doc.roundedRect(214, 8, 51, 18, 3, 3, "FD");
+    doc.setFont(undefined, "bold");
+    doc.setTextColor(...grisMuted);
+    doc.setFontSize(6.8);
+    doc.text("FECHA", 219, 15);
+    doc.setTextColor(...grisTexto);
+    doc.setFontSize(8.2);
+    doc.text(document.getElementById("fleetDate").textContent, 238, 15);
+
+    doc.setFillColor(255, 250, 237);
+    doc.setDrawColor(247, 215, 155);
+    doc.roundedRect(62, 24, 42, 8, 4, 4, "FD");
+    doc.setTextColor(145, 91, 24);
+    doc.setFontSize(6.8);
+    doc.text(`PLAN ${document.getElementById("fleetPlan").value.toUpperCase()}`, 67, 29.2);
+    doc.setFillColor(239, 246, 255);
+    doc.setDrawColor(191, 219, 254);
+    doc.roundedRect(108, 24, 47, 8, 4, 4, "FD");
+    doc.setTextColor(...azul);
+    doc.text("FLOTILLA", 116, 29.2);
+
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(...grisLinea);
+    doc.roundedRect(14, 35, pageWidth - 28, 22, 3, 3, "FD");
+    doc.setFontSize(6.8);
+    doc.setTextColor(...grisMuted);
+    doc.text("CLIENTE", 20, 42);
+    doc.text("PLAN", 92, 42);
+    doc.text("COBERTURA", 132, 42);
+    doc.text("VEHÍCULOS", 184, 42);
+    doc.text("AGENTE", 222, 42);
+    doc.setFont(undefined, "bold");
+    doc.setFontSize(8.2);
+    doc.setTextColor(...grisTexto);
+    doc.text(document.getElementById("fleetClientName").value || "-", 20, 47, { maxWidth: 66 });
+    doc.text(document.getElementById("fleetPlan").value, 92, 47);
+    doc.text(document.getElementById("fleetCoverage").value, 132, 47, { maxWidth: 44 });
+    doc.text(String(fleetVehicles.length), 184, 47);
+    doc.text(document.getElementById("fleetAgent").value || "-", 222, 47, { maxWidth: 38 });
+    doc.setFont(undefined, "normal");
+    doc.setFontSize(7.2);
+    doc.setTextColor(...grisMuted);
+    doc.text(`C.P: ${document.getElementById("fleetClientCP").value || "-"}`, 20, 52);
+    doc.text("Costos anuales capturados por vehículo", 92, 52);
+
+    doc.setDrawColor(...dorado);
+    doc.setLineWidth(.9);
+    doc.line(14, 62, pageWidth - 14, 62);
+
+    const vehicleHead = [{ content: "Vehículo", styles: { halign: "left" } }, ...selected.map(() => ({ content: "", styles: { halign: "center" } }))];
+    const vehicleBody = fleetVehicles.map((vehicle) => [
+        `${vehicle.year}\n${vehicle.description}`,
+        ...selected.map((insurer) => money(vehicle.costs[insurer.name]))
+    ]);
+
+    doc.autoTable({
+        startY: 55,
+        head: [vehicleHead],
+        body: vehicleBody,
+        margin: { left: 18, right: 18 },
+        tableWidth: pageWidth - 36,
+        theme: "grid",
+        headStyles: { fillColor: [255, 255, 255], textColor: grisTexto, lineColor: grisLinea, lineWidth: .25, minCellHeight: 13 },
+        styles: { fontSize: 7.5, cellPadding: 2.2, valign: "middle", halign: "center", lineColor: grisLinea, lineWidth: .2 },
+        columnStyles: { 0: { cellWidth: 68, halign: "left", fontStyle: "bold", fillColor: azulClaro } },
+        alternateRowStyles: { fillColor: [249, 250, 252] },
+        didDrawCell: (data) => {
+            if (data.section === "head" && data.column.index > 0) {
+                drawPdfImage(doc, logos[selected[data.column.index - 1].name], data.cell.x + 2, data.cell.y + 1, data.cell.width - 4, data.cell.height - 2);
+            }
+        }
+    });
+
+    const coverageStart = (doc.lastAutoTable?.finalY || 60) + 8;
+    const coverageHead = ["Cobertura", ...selected.map(() => "")];
+    const coverageBody = fleetCoverageRows.map((coverage) => [coverage, ...selected.map((insurer) => fleetCoverage[`${coverage}|${insurer.name}`] || "-")]);
+    fleetAdditionalCoverages.forEach((coverage) => {
+        const name = coverage.name.trim() || "Cobertura adicional";
+        const values = selected.map((insurer) => coverage.values[insurer.name] || "-");
+        if (name !== "Cobertura adicional" || values.some((value) => value !== "-")) coverageBody.push([name, ...values]);
+    });
+    doc.autoTable({
+        startY: coverageStart,
+        head: [coverageHead],
+        body: coverageBody,
+        margin: { left: 18, right: 18 },
+        tableWidth: pageWidth - 36,
+        theme: "grid",
+        headStyles: { fillColor: [255, 255, 255], textColor: grisTexto, lineColor: grisLinea, lineWidth: .25, minCellHeight: 13 },
+        styles: { fontSize: 7, cellPadding: 2.2, valign: "middle", halign: "center", lineColor: grisLinea, lineWidth: .2 },
+        columnStyles: { 0: { cellWidth: 68, halign: "left", fontStyle: "bold", fillColor: azulClaro } },
+        didDrawCell: (data) => {
+            if (data.section === "head" && data.column.index > 0) {
+                drawPdfImage(doc, logos[selected[data.column.index - 1].name], data.cell.x + 2, data.cell.y + 1, data.cell.width - 4, data.cell.height - 2);
+            }
+        }
+    });
+
+    const noteY = Math.min((doc.lastAutoTable?.finalY || 190) + 7, pageHeight - 10);
+    doc.setFontSize(7);
+    doc.setTextColor(...grisMuted);
+    doc.text("Los costos y coberturas fueron capturados para fines comparativos y están sujetos a validación de la aseguradora.", 14, noteY);
+    doc.text("Documento generado por Swartz Seguros y Contabilidad", 14, Math.min(noteY + 6, pageHeight - 4));
+
+    const filename = document.getElementById("fleetClientName").value.trim().toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "") || "cliente";
+    doc.save(`cotizacion-flotilla-${filename}.pdf`);
+}
+
+function clearFleet() {
+    fleetVehicles = [];
+    fleetCoverage = {};
+    fleetAdditionalCoverages = [];
+    document.getElementById("fleetClientName").value = "";
+    document.getElementById("fleetClientCP").value = "";
+    document.getElementById("fleetAgent").value = "";
+    document.querySelectorAll(".fleetInsurer__Check").forEach((check) => { check.checked = false; });
+    renderAllTables();
+}
+
+document.getElementById("fleetDate").textContent = new Date().toLocaleDateString("es-MX");
+renderInsurers();
+renderAllTables();
+document.getElementById("fleetClientCP").addEventListener("input", (event) => restrictNumericInput(event.currentTarget));
+document.getElementById("fleetPlan").addEventListener("change", () => {
+    fleetCoverage = {};
+    renderCoverageTable();
+});
+document.getElementById("addFleetVehicle").addEventListener("click", addFleetVehicle);
+document.getElementById("addFleetCoverage").addEventListener("click", addFleetCoverage);
+document.getElementById("generateFleetPDF").addEventListener("click", generateFleetPDF);
+document.getElementById("clearFleet").addEventListener("click", clearFleet);

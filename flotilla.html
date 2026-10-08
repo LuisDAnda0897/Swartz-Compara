@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cotización masiva | Swartz Seguros</title>
+    <link rel="stylesheet" href="css_index.css">
+    <link rel="stylesheet" href="flotilla.css">
+</head>
+<body>
+    <header class="header">
+        <img src="logo-Photoroom.png" alt="Logo Swartz" class="logo__Header">
+        <div class="agent__Data">
+            <section class="agent__Selector">
+                <h2>Agente:</h2>
+                <select id="fleetAgent" class="agente__List">
+                    <option value="">Seleccione Agente</option>
+                    <option value="Miguel Ayala">Miguel Ayala</option>
+                    <option value="Aylin Bocanegra">Aylin Bocanegra</option>
+                    <option value="Luis De Anda">Luis De Anda</option>
+                    <option value="Francisco Mendoza">Francisco Mendoza</option>
+                    <option value="Karen Cruz">Karen Cruz</option>
+                    <option value="Lupita Rivera">Lupita Rivera</option>
+                    <option value="Cinthya de la Torre">Cinthya de la Torre</option>
+                    <option value="Anel Beltran">Anel Beltran</option>
+                </select>
+            </section>
+        </div>
+        <div class="fecha">Fecha: <span id="fleetDate"></span></div>
+    </header>
+
+    <main>
+        <div class="fleetPage__Topbar">
+            <div>
+                <p class="fleetPage__Eyebrow">COTIZACIÓN MASIVA</p>
+                <h1>Cotización de flotilla</h1>
+                <p class="fleetPage__Hint">Agrega los vehículos y captura el costo anual de cada aseguradora.</p>
+            </div>
+            <a class="fleetPage__Back" href="index.html">Volver al cotizador individual</a>
+        </div>
+
+        <section class="fleetPage__Grid">
+            <div class="fleetCard">
+                <h2>Cliente</h2>
+                <div class="fleetForm__Grid">
+                    <label for="fleetClientName">Nombre o empresa</label>
+                    <input id="fleetClientName" placeholder="Nombre del cliente o empresa">
+                    <label for="fleetClientCP">C.P.</label>
+                    <input id="fleetClientCP" data-numeric="integer" inputmode="numeric" maxlength="5" placeholder="45130">
+                    <label for="fleetPlan">Plan</label>
+                    <select id="fleetPlan">
+                        <option value="Particular">Particular</option>
+                        <option value="Uber">Uber</option>
+                        <option value="Multiplataforma">Multiplataforma</option>
+                        <option value="Moto App">Moto App</option>
+                    </select>
+                    <label for="fleetCoverage">Cobertura</label>
+                    <select id="fleetCoverage">
+                        <option value="Amplia">Amplia</option>
+                        <option value="Limitada">Limitada</option>
+                        <option value="Responsabilidad Civil">Responsabilidad Civil</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="fleetCard">
+                <h2>Aseguradoras</h2>
+                <p class="fleetCard__Hint">Selecciona las opciones que aparecerán en la comparación.</p>
+                <div id="fleetInsurers" class="fleetInsurers"></div>
+            </div>
+        </section>
+
+        <section class="fleetSection">
+            <div class="fleetSection__Header">
+                <div>
+                    <h2>Vehículos y costos anuales</h2>
+                    <p>Una fila por vehículo. Los costos son libres para capturar la cotización recibida.</p>
+                </div>
+                <button id="addFleetVehicle" class="fleetAction fleetAction--primary" type="button">+ Agregar auto</button>
+            </div>
+            <div class="fleetTable__Wrap">
+                <table class="fleetTable" id="fleetVehiclesTable">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+                <p id="fleetVehiclesEmpty" class="fleetEmpty">Agrega el primer auto para comenzar la cotización.</p>
+            </div>
+        </section>
+
+        <section class="fleetSection">
+            <div class="fleetSection__Header">
+                <div>
+                    <h2>Coberturas comunes</h2>
+                    <p>Captura las condiciones de cobertura por aseguradora para la flotilla.</p>
+                </div>
+            </div>
+            <div class="fleetTable__Wrap">
+                <table class="fleetTable fleetCoverageTable" id="fleetCoverageTable">
+                    <thead></thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <button id="addFleetCoverage" class="fleetAction fleetAction--secondary" type="button">+ Agregar cobertura adicional</button>
+        </section>
+
+        <div class="fleetActions">
+            <button id="generateFleetPDF" class="pdf__Button" type="button">Generar PDF de flotilla</button>
+            <button id="clearFleet" class="clear__Button" type="button">Limpiar todo</button>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <script src="flotilla.js?v=20261008-2"></script>
+</body>
+</html>

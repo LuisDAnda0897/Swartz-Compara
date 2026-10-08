@@ -518,6 +518,24 @@ main{
     background-color: #4b5563;
 }
 
+.fleet__Button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 18px;
+    border-radius: 6px;
+    background: #eaf2fb;
+    border: 1px solid #9fc2e6;
+    color: #15558c;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.fleet__Button:hover {
+    background: #dcecfb;
+}
+
 .coverage__Input[readonly],
 .coverage__Cell input[readonly] {
     background-color: #f8fafc;
