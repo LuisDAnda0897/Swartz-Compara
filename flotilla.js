@@ -99,7 +99,7 @@ function renderVehicleTable() {
             <td>
                 <div class="fleetVehicleFields">
                     <input data-field="year" data-numeric="integer" data-row="${rowIndex}" inputmode="numeric" maxlength="4" placeholder="Modelo" value="${escapeHtml(vehicle.year)}">
-                    <input data-field="description" data-row="${rowIndex}" placeholder="Descripción del vehículo" value="${escapeHtml(vehicle.description)}">
+                    <input data-field="description" data-uppercase="true" data-row="${rowIndex}" placeholder="Descripción del vehículo" value="${escapeHtml(vehicle.description.toUpperCase())}">
                     <button class="fleetRemove" data-remove="${rowIndex}" type="button" title="Eliminar auto">×</button>
                 </div>
             </td>
@@ -122,6 +122,10 @@ function renderVehicleTable() {
         restrictNumericInput(input);
         if (input.dataset.field) fleetVehicles[Number(input.dataset.row)][input.dataset.field] = input.value;
         if (input.dataset.cost) fleetVehicles[Number(input.dataset.row)].costs[input.dataset.cost] = input.value;
+    }));
+    table.querySelectorAll("[data-uppercase]").forEach((input) => input.addEventListener("input", () => {
+        input.value = input.value.toUpperCase();
+        fleetVehicles[Number(input.dataset.row)][input.dataset.field] = input.value;
     }));
     table.querySelectorAll("[data-remove]").forEach((button) => button.addEventListener("click", () => {
         fleetVehicles.splice(Number(button.dataset.remove), 1);
@@ -185,6 +189,20 @@ function restrictNumericInput(input) {
     input.value = value;
 }
 
+function formatFleetBirthDate(value) {
+    if (!value) return "-";
+    const date = new Date(`${value}T00:00:00`);
+    return Number.isNaN(date.getTime()) ? "-" : date.toLocaleDateString("es-MX");
+}
+
+function capitalizeFleetName(input) {
+    const words = input.value.split(" ");
+    for (let index = 0; index < words.length; index += 1) {
+        if (words[index]) words[index] = words[index][0].toUpperCase() + words[index].slice(1).toLowerCase();
+    }
+    input.value = words.join(" ");
+}
+
 function addFleetCoverage() {
     fleetAdditionalCoverages.push({ id: `fleet-additional-${Date.now()}`, name: "", values: {} });
     renderCoverageTable();
@@ -202,6 +220,7 @@ function addFleetVehicle() {
 function validateFleet() {
     const missing = [];
     if (!document.getElementById("fleetClientName").value.trim()) missing.push("Nombre o empresa");
+    if (!document.getElementById("fleetClientBdy").value) missing.push("fecha de nacimiento");
     if (!document.getElementById("fleetAgent").value) missing.push("Agente");
     const selected = selectedFleetInsurers();
     if (!selected.length) missing.push("al menos una aseguradora");
@@ -321,7 +340,7 @@ async function generateFleetPDF() {
     doc.setFont(undefined, "normal");
     doc.setFontSize(7.2);
     doc.setTextColor(...grisMuted);
-    doc.text(`C.P: ${document.getElementById("fleetClientCP").value || "-"}`, 20, 52);
+    doc.text(`Nac: ${formatFleetBirthDate(document.getElementById("fleetClientBdy").value)}   C.P: ${document.getElementById("fleetClientCP").value || "-"}`, 20, 52, { maxWidth: 68 });
     doc.text("Costos anuales capturados por vehículo", 92, 52);
 
     doc.setDrawColor(...dorado);
@@ -335,7 +354,7 @@ async function generateFleetPDF() {
     ]);
 
     doc.autoTable({
-        startY: 55,
+        startY: 66,
         head: [vehicleHead],
         body: vehicleBody,
         margin: { left: 18, right: 18 },
@@ -392,6 +411,7 @@ function clearFleet() {
     fleetCoverage = {};
     fleetAdditionalCoverages = [];
     document.getElementById("fleetClientName").value = "";
+    document.getElementById("fleetClientBdy").value = "";
     document.getElementById("fleetClientCP").value = "";
     document.getElementById("fleetAgent").value = "";
     document.querySelectorAll(".fleetInsurer__Check").forEach((check) => { check.checked = false; });
@@ -401,6 +421,7 @@ function clearFleet() {
 document.getElementById("fleetDate").textContent = new Date().toLocaleDateString("es-MX");
 renderInsurers();
 renderAllTables();
+document.getElementById("fleetClientName").addEventListener("input", (event) => capitalizeFleetName(event.currentTarget));
 document.getElementById("fleetClientCP").addEventListener("input", (event) => restrictNumericInput(event.currentTarget));
 document.getElementById("fleetPlan").addEventListener("change", () => {
     fleetCoverage = {};
