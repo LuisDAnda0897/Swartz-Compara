@@ -417,7 +417,7 @@ function obtenerDesglosePago(index) {
     const total = control.querySelector(`.payment__Total[data-method="${method}"]`)?.value || "";
 
     if (esVigenciaSemestralSPT(index) && method === "semestral") {
-        return `${label}\nCosto de vigencia: ${formatoPesos(total)}\nVigencia de póliza: 6 meses\nAl término: corresponde renovación`;
+        return `${label}\nCosto Semestral: ${formatoPesos(total)}\nVigencia de póliza: 6 meses\nAl término corresponde renovación`;
     }
 
     const first = control.querySelector(`.payment__First[data-method="${method}"]`)?.value || "";
