@@ -375,6 +375,16 @@ const paymentMethodLabels = {
     mensual: "Mensual"
 };
 
+function esVigenciaSemestralSPT(index) {
+    return aseguradoras[Number(index)]?.nombre === "SPT";
+}
+
+function obtenerEtiquetaMetodoPago(index, method) {
+    return esVigenciaSemestralSPT(index) && method === "semestral"
+        ? "Vigencia semestral"
+        : paymentMethodLabels[method] || method;
+}
+
 function obtenerPaymentControl(index) {
     return document.querySelector(`.payment__Control[data-index="${index}"]`);
 }
@@ -386,7 +396,7 @@ function obtenerFormasPagoDisponibles(index) {
     const pendientes = Array.from(control.querySelectorAll(".payment__Mode"))
         .filter(check => check.dataset.method !== "mensual")
         .filter(check => !check.checked)
-        .map(check => paymentMethodLabels[check.dataset.method] || check.dataset.method);
+        .map(check => obtenerEtiquetaMetodoPago(index, check.dataset.method));
 
     return pendientes.length ? pendientes.join(" / ") : "-";
 }
@@ -403,8 +413,13 @@ function obtenerDesglosePago(index) {
     const method = obtenerMetodoPagoSeleccionado(index);
     if (!method) return "-";
 
-    const label = paymentMethodLabels[method] || method;
+    const label = obtenerEtiquetaMetodoPago(index, method);
     const total = control.querySelector(`.payment__Total[data-method="${method}"]`)?.value || "";
+
+    if (esVigenciaSemestralSPT(index) && method === "semestral") {
+        return `${label}\nCosto de vigencia: ${formatoPesos(total)}\nVigencia de póliza: 6 meses\nAl término: corresponde renovación`;
+    }
+
     const first = control.querySelector(`.payment__First[data-method="${method}"]`)?.value || "";
     const next = control.querySelector(`.payment__Next[data-method="${method}"]`)?.value || "";
 
@@ -1048,7 +1063,14 @@ async function generarPDF() {
     }
 
     if (hayDesglosePago) {
-        body.push(["Desglose de pagos", ...desglosesPago.map(desglose => ({ content: desglose, colSpan: 2 }))]);
+        const hayVigenciaSPT = seleccionadas.some((aseguradora) => esVigenciaSemestralSPT(aseguradora.index) && obtenerMetodoPagoSeleccionado(aseguradora.index) === "semestral");
+        const hayOtroDesglose = seleccionadas.some((aseguradora) => !esVigenciaSemestralSPT(aseguradora.index) && obtenerDesglosePago(aseguradora.index) !== "-");
+        const etiquetaDesglose = hayVigenciaSPT && hayOtroDesglose
+            ? "Desglose de pagos y vigencias"
+            : hayVigenciaSPT
+                ? "Vigencia de póliza"
+                : "Desglose de pagos";
+        body.push([etiquetaDesglose, ...desglosesPago.map(desglose => ({ content: desglose, colSpan: 2 }))]);
     }
 
     body.push(["MSI", { content: notaMsi, colSpan: seleccionadas.length * 2 }]);
@@ -1236,7 +1258,7 @@ async function generarPDF() {
                 const costoIndex = Math.floor((data.column.index - 1) / 2);
                 if (seleccionadas[costoIndex]?.index === aseguradoraActualPDF.indice) {
                     data.cell.styles.lineColor = [234, 88, 12];
-                    data.cell.styles.lineWidth = 0.5;
+                    data.cell.styles.lineWidth = 0.45;
                 }
             }
         },
