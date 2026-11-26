@@ -1291,7 +1291,7 @@ async function generarPDF() {
     doc.setTextColor(90, 90, 90);
     const notaVigencia = "Cotizacion con vigencia estimada de 15 dias naturales, excepto Qualitas con vigencia de 7 dias. La vigencia no garantiza precio fijo: el costo puede cambiar sin previo aviso por ajustes, promociones por tiempo limitado, disponibilidad o decision de la aseguradora. Una vez vencida la vigencia, el costo queda sujeto a recotizacion y es mas propenso a cambios.";
     doc.text(doc.splitTextToSize(notaVigencia, 245), 14, notaY);
-    doc.tetx("¹ Accidente al Conductor: En Seguros Banorte y Qualitas aplica unicamente por Muerte Accidental, consulta con tu agente los detalles de la cobertura", 14, notaY + 8);
+    doc.text("¹ Accidente al Conductor: En Seguros Banorte y Qualitas aplica unicamente por Muerte Accidental, consulta con tu agente los detalles de la cobertura", 14, notaY + 8);
     doc.text("Documento generado por Swartz Seguros y Contabilidad", 14, notaY + 16);
 
     const nombreCliente = document.getElementById("clientName").value || "cliente";
